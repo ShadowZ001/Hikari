@@ -37,9 +37,10 @@ export function startDashboardServer(client) {
    */
   function getRedirectUri(req) {
     const forwardedHost = req.headers['x-forwarded-host'];
-    const forwardedProto = req.headers['x-forwarded-proto'] || 'http';
     if (forwardedHost) {
-      return `${forwardedProto}://${forwardedHost}/api/auth/callback`;
+      const isLocal = forwardedHost.includes('localhost') || forwardedHost.includes('127.0.0.1');
+      const proto = isLocal ? 'http' : 'https';
+      return `${proto}://${forwardedHost}/api/auth/callback`;
     }
     return DISCORD_REDIRECT_URI;
   }
@@ -78,6 +79,8 @@ export function startDashboardServer(client) {
       });
 
       if (!tokenResponse.ok) {
+        const errText = await tokenResponse.text().catch(() => '');
+        console.error(`[Dashboard Server] Failed code exchange. Redirect URI used: "${redirectUri}". Status: ${tokenResponse.status}. Details:`, errText);
         return res.status(500).send('Failed to exchange code for token.');
       }
 
