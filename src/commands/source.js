@@ -159,7 +159,7 @@ export default {
           );
 
           const card = PrefixLayout.messageCard(checkEmoji, `**Your preferred music source is now \`${selectedSourceName}\`**`);
-          await interaction.update({ ...card, components: [] });
+          await interaction.update(card);
         } catch (error) {
           console.error(error);
           const card = PrefixLayout.messageCard('❌', '**An error occurred while saving your choice.**');
