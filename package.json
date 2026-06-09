@@ -1,0 +1,29 @@
+{
+  "name": "hikari-bot",
+  "version": "1.0.0",
+  "description": "Discord bot using Components V2 (Cv2) for rich visual layouts",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "start-all": "node src/index.js"
+  },
+  "keywords": [
+    "discord",
+    "discord.js",
+    "components-v2",
+    "hikari"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "discord.js": "^14.26.4",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.3",
+    "shoukaku": "^4.3.0"
+  }
+}
