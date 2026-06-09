@@ -169,9 +169,10 @@ export async function playTrack(client, guildId, channel) {
       }
     }
 
-    // Fallback: If we couldn't resolve, try search by title on all nodes
+    // Fallback: If we couldn't resolve, try search by title and artist on all nodes
     if (!encodedTrack) {
-      const fallbackQuery = `ytmsearch:${track.title}`;
+      const artistQuery = (track.artist && track.artist !== 'Unknown Artist' && track.artist !== 'Faheem Abdullah, Rauhan Malik, Amir Ameer') ? ` ${track.artist}` : '';
+      const fallbackQuery = `ytmsearch:${track.title}${artistQuery}`;
       for (const node of connectedNodes) {
         try {
           console.log(`[Hikari Player] Attempting fallback track resolution on node "${node.name}"`);

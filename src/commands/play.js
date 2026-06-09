@@ -30,7 +30,23 @@ export default {
       const choices = tracks.slice(0, 25).map(track => {
         const title = track.title.substring(0, 75);
         const artist = track.artist.substring(0, 20);
-        const val = track.uri.length > 100 ? track.uri.substring(0, 100) : track.uri;
+        
+        // Clean the URI by stripping extra query parameters to prevent Discord 100-char value truncation
+        let cleanUri = track.uri || '';
+        try {
+          if (cleanUri.startsWith('http')) {
+            const url = new URL(cleanUri);
+            if (url.hostname.includes('youtube.com') || url.hostname.includes('youtu.be')) {
+              const v = url.searchParams.get('v');
+              cleanUri = v ? `${url.protocol}//${url.hostname}${url.pathname}?v=${v}` : cleanUri;
+            } else if (url.hostname.includes('spotify.com') || url.hostname.includes('apple.com')) {
+              url.search = '';
+              cleanUri = url.toString();
+            }
+          }
+        } catch (e) {}
+
+        const val = cleanUri.length > 100 ? cleanUri.substring(0, 100) : cleanUri;
         return {
           name: `${title} - ${artist}`,
           value: val
