@@ -185,54 +185,13 @@ export async function getLavalinkSupportedSources(client) {
   const connectedNodes = Array.from(client.shoukaku.nodes.values()).filter(n => n.state === 1);
   if (connectedNodes.length === 0) return [];
 
-  // Use connection details of the first active connected node
   const node = connectedNodes[0];
-  const urlStr = node.connection.url;
-  const auth = node.connection.auth;
-  const secure = node.connection.secure;
-
-  let host = urlStr;
-  let port = secure ? 443 : 80;
-
-  if (urlStr.includes(':')) {
-    const parts = urlStr.split(':');
-    host = parts[0];
-    port = parseInt(parts[1], 10);
+  try {
+    const data = await node.rest.fetch({ endpoint: '/info' });
+    return data?.sourceManagers || [];
+  } catch (e) {
+    console.error('[Lavalink Utility] Error fetching supported sources:', e.message || e);
+    return [];
   }
-
-  return new Promise((resolve) => {
-    const options = {
-      host: host,
-      port: port,
-      path: '/v4/info',
-      method: 'GET',
-      headers: {
-        'Authorization': auth
-      },
-      timeout: 3000
-    };
-
-    const requestLib = secure ? https : http;
-    const req = requestLib.request(options, (res) => {
-      let body = '';
-      res.on('data', chunk => body += chunk);
-      res.on('end', () => {
-        if (res.statusCode !== 200) return resolve([]);
-        try {
-          const data = JSON.parse(body);
-          resolve(data.sourceManagers || []);
-        } catch (e) {
-          resolve([]);
-        }
-      });
-    });
-
-    req.on('error', () => resolve([]));
-    req.on('timeout', () => {
-      req.destroy();
-      resolve([]);
-    });
-    req.end();
-  });
 }
 
