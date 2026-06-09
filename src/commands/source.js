@@ -114,21 +114,36 @@ export default {
       }
 
       // Render options menu
+      const menuCard = PrefixLayout.messageCard('⚙️', '**Preferred Music Search Source**\nChoose your preferred platform for music searches from the selection menu below.');
+
+      const selectMenuOptions = allowedSources.map(src => ({
+        label: src.label,
+        value: src.value,
+        emoji: src.emoji
+      }));
+
       const selectMenu = new StringSelectMenuBuilder()
         .setCustomId('source_select')
         .setPlaceholder('Choose your preferred search source')
-        .addOptions(allowedSources);
+        .addOptions(selectMenuOptions);
 
       const row = new ActionRowBuilder().addComponents(selectMenu);
-      const response = await message.reply({ components: [row] });
+      const response = await message.reply({ 
+        components: [menuCard.components[0], row],
+        flags: menuCard.flags
+      });
 
       const collector = response.createMessageComponentCollector({
         componentType: ComponentType.StringSelect,
-        time: 60000,
-        filter: (interaction) => interaction.user.id === message.author.id
+        time: 60000
       });
 
       collector.on('collect', async (interaction) => {
+        if (interaction.user.id !== message.author.id) {
+          const card = PrefixLayout.messageCard(warnEmoji, '**Only the command executor can change their search source.**');
+          return interaction.reply({ ...card, ephemeral: true });
+        }
+
         try {
           const selected = interaction.values[0];
           const selectedSourceName = allowedSources.find(opt => opt.value === selected)?.label;
@@ -147,13 +162,20 @@ export default {
           await interaction.update({ ...card, components: [] });
         } catch (error) {
           console.error(error);
-          await interaction.reply({ content: 'An error occurred.', ephemeral: true });
+          const card = PrefixLayout.messageCard('❌', '**An error occurred while saving your choice.**');
+          await interaction.reply({ ...card, ephemeral: true });
         }
       });
 
-      collector.on('end', (collected, reason) => {
+      collector.on('end', async (collected, reason) => {
         if (reason === 'time' && collected.size === 0) {
-          response.delete().catch(() => {});
+          const disabledMenu = StringSelectMenuBuilder.from(selectMenu).setDisabled(true);
+          const disabledRow = new ActionRowBuilder().addComponents(disabledMenu);
+          const expiredCard = PrefixLayout.messageCard('⚙️', '**Music search source selection menu expired.**');
+          await response.edit({ 
+            components: [expiredCard.components[0], disabledRow],
+            flags: expiredCard.flags
+          }).catch(() => {});
         }
       });
 
