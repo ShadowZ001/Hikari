@@ -1,9 +1,5 @@
 import { StatsLayout } from '../components/StatsLayout.js';
 
-/**
- * Returns formatted time string matching H:MM AM/PM.
- * @returns {string}
- */
 function getFormattedTime() {
   return new Date().toLocaleTimeString('en-US', {
     hour: 'numeric',
@@ -17,11 +13,6 @@ export default {
   name: 'stats',
   description: 'Displays the bot and system statistics.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >stats).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const client = message.client;
@@ -36,8 +27,7 @@ export default {
       });
 
       const reply = await message.reply(layout.toPayload());
-      
-      // Register this message as an active stats session for live updates
+
       if (!client.statsSessions) {
         client.statsSessions = new Map();
       }
@@ -55,10 +45,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /stats).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const client = interaction.client;
@@ -73,8 +59,7 @@ export default {
       });
 
       const reply = await interaction.reply({ ...layout.toPayload(), fetchReply: true });
-      
-      // Register this message as an active stats session for live updates
+
       if (!client.statsSessions) {
         client.statsSessions = new Map();
       }

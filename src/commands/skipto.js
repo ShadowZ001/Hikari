@@ -11,7 +11,7 @@ export default {
     {
       name: 'position',
       description: 'Position in queue to skip to.',
-      type: 4, // INTEGER
+      type: 4,
       required: true
     }
   ],

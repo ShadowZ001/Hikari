@@ -6,15 +6,10 @@ import { StatsLayout } from '../components/StatsLayout.js';
 export default {
   name: Events.ClientReady,
   once: true,
-  /**
-   * Executes when the client successfully connects and is ready.
-   * Registers slash commands globally.
-   * @param {import('discord.js').Client} client 
-   */
+
   async execute(client) {
     console.log(`\x1b[32m✔ [Client] Bot is online! Connected as ${client.user.tag}\x1b[0m`);
 
-    // Periodically save real-time statistics for the dashboard
     const saveBotStats = () => {
       try {
         const stats = {
@@ -36,7 +31,6 @@ export default {
     setInterval(saveBotStats, 3000);
     saveBotStats();
 
-    // Load blacklist cache from database
     client.blacklist = new Set();
     try {
       const dbList = await Blacklist.find();
@@ -45,14 +39,13 @@ export default {
     } catch (err) {
       console.error('\x1b[31m✖ [Database] Error loading blacklist from database:\x1b[0m', err);
     }
-    
+
     let emojiText = '';
     client.emojis.cache.forEach(emoji => {
       emojiText += `Name: ${emoji.name}, ID: ${emoji.id}, Format: <:${emoji.name}:${emoji.id}>\n`;
     });
     fs.writeFileSync('./emojis_all.txt', emojiText);
-    
-    // Configured list of presence statuses to cycle through
+
     const statuses = [
       {
         type: ActivityType.Playing,
@@ -74,70 +67,67 @@ export default {
 
     const rotatePresence = () => {
       const activity = statuses[currentIndex];
-      
+
       client.user.setPresence({
         activities: [activity],
         status: 'online',
       });
-      
+
       const displayLog = activity.type === ActivityType.Custom
         ? `<:${activity.emoji.name}:${activity.emoji.id}> ${activity.state}`
         : `Playing ${activity.name}`;
-        
+
       if (firstLog) {
         console.log(`\x1b[36mℹ [Presence] Status initialized: "${displayLog}"\x1b[0m`);
         firstLog = false;
       }
-      
+
       currentIndex = (currentIndex + 1) % statuses.length;
     };
 
-    // Set initial presence on startup
     rotatePresence();
 
-    // Rotate status every 15 seconds (15000 ms)
     setInterval(rotatePresence, 15000);
 
-    // Initialize stats sessions map for live real-time updates
     client.statsSessions = new Map();
 
     const updateStatsMessages = async () => {
       if (!client.statsSessions || client.statsSessions.size === 0) return;
-      
+
       for (const [messageId, session] of client.statsSessions.entries()) {
-        // Expire session after 5 minutes of inactivity (no interactions/updates)
+
         if (Date.now() - session.lastUpdated > 5 * 60 * 1000) {
           client.statsSessions.delete(messageId);
           continue;
         }
-        
+
         try {
           const channel = await client.channels.fetch(session.channelId).catch(() => null);
           if (!channel) {
             client.statsSessions.delete(messageId);
             continue;
           }
-          
+
           const msg = await channel.messages.fetch(messageId).catch(() => null);
           if (!msg) {
             client.statsSessions.delete(messageId);
             continue;
           }
-          
+
           const timeString = new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
             minute: '2-digit',
             second: '2-digit',
             hour12: true
           });
-          
+
           const layout = new StatsLayout({
             client,
             category: session.category,
             username: session.username,
             timeString
           });
-          
+
           await msg.edit(layout.toPayload()).catch(() => {
             client.statsSessions.delete(messageId);
           });
@@ -148,10 +138,8 @@ export default {
       }
     };
 
-    // Auto-update stats every 5 seconds (5000 ms)
     setInterval(updateStatsMessages, 5000);
 
-    // Register Application Slash Commands globally
     const commandsData = [
       {
         name: 'help',

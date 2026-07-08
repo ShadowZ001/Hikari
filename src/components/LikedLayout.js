@@ -1,12 +1,7 @@
 import { ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, SeparatorSpacingSize, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } from 'discord.js';
 
 export class LikedLayout {
-  /**
-   * Card for successfully liking a track.
-   * @param {object} track 
-   * @param {import('discord.js').User} user 
-   * @returns {object} Discord message payload
-   */
+
   static successLiked(track, user) {
     const container = new ContainerBuilder();
 
@@ -18,7 +13,7 @@ export class LikedLayout {
       .setSpacing(SeparatorSpacingSize.Small);
     container.addSeparatorComponents(divider);
 
-    const bodyContent = 
+    const bodyContent =
       `Successfully liked **[${track.title}](${track.uri})**.\n\n` +
       `-# Action by ${user.tag}`;
     const bodyDisplay = new TextDisplayBuilder().setContent(bodyContent);
@@ -30,11 +25,6 @@ export class LikedLayout {
     };
   }
 
-  /**
-   * Card for already liked track.
-   * @param {object} track 
-   * @returns {object} Discord message payload
-   */
   static alreadyLiked(track) {
     const container = new ContainerBuilder();
 
@@ -56,12 +46,6 @@ export class LikedLayout {
     };
   }
 
-  /**
-   * Card for successfully unliking a track.
-   * @param {object} track 
-   * @param {import('discord.js').User} user 
-   * @returns {object} Discord message payload
-   */
   static successUnliked(track, user) {
     const container = new ContainerBuilder();
 
@@ -73,7 +57,7 @@ export class LikedLayout {
       .setSpacing(SeparatorSpacingSize.Small);
     container.addSeparatorComponents(divider);
 
-    const bodyContent = 
+    const bodyContent =
       `Successfully removed **[${track.title}](${track.uri})** from your favorites.\n\n` +
       `-# Action by ${user.tag}`;
     const bodyDisplay = new TextDisplayBuilder().setContent(bodyContent);
@@ -85,14 +69,6 @@ export class LikedLayout {
     };
   }
 
-  /**
-   * Paginated favorites list card.
-   * @param {object[]} songs 
-   * @param {number} page (0-based)
-   * @param {number} totalPages 
-   * @param {import('discord.js').User} requester 
-   * @returns {object} Discord message payload
-   */
   static listCard(songs, page, totalPages, requester) {
     const container = new ContainerBuilder();
 
@@ -118,7 +94,6 @@ export class LikedLayout {
     const bodyDisplay = new TextDisplayBuilder().setContent(contentText);
     container.addTextDisplayComponents(bodyDisplay);
 
-    // Pagination buttons
     if (totalPages > 1) {
       const prevBtn = new ButtonBuilder()
         .setCustomId(`liked_prev_${page}_${requester.id}`)

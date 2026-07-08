@@ -1,10 +1,10 @@
-import { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ComponentType
 } from 'discord.js';
@@ -89,7 +89,7 @@ export default {
       if (pages > 1) {
         payload.components.push(getButtonsRow(currentPage));
       } else {
-        // Just add a close button
+
         payload.components.push(new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setCustomId(`sl_close_${interaction.user.id}`)
@@ -136,7 +136,7 @@ export default {
 
       collector.on('end', async (collected, reason) => {
         if (reason === 'time' || reason === 'idle') {
-          // Edit to remove buttons
+
           await interaction.editReply({
             components: [createContainer(currentPage)],
             flags: MessageFlags.IsComponentsV2

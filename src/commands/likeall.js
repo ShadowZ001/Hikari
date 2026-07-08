@@ -17,7 +17,6 @@ export default {
         return interaction.reply({ ...card, ephemeral: false });
       }
 
-      // Collect current and remaining tracks
       const tracks = player.playlist.tracks.slice(player.currentIndex);
       if (tracks.length === 0) {
         const card = PrefixLayout.messageCard('❌', '**There are no upcoming songs in the queue.**');
@@ -84,7 +83,6 @@ export default {
         return message.reply(card);
       }
 
-      // Collect current and remaining tracks
       const tracks = player.playlist.tracks.slice(player.currentIndex);
       if (tracks.length === 0) {
         const card = PrefixLayout.messageCard('❌', '**There are no upcoming songs in the queue.**');

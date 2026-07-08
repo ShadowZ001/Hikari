@@ -17,7 +17,7 @@ export default {
       return interaction.respond([]);
     }
 
-    const isUrl = /^https?:\/\//.test(focusedValue);
+    const isUrl = /^https?:\/\
     if (isUrl) {
       return interaction.respond([]);
     }
@@ -30,8 +30,7 @@ export default {
       const choices = tracks.slice(0, 25).map(track => {
         const title = track.title.substring(0, 75);
         const artist = track.artist.substring(0, 20);
-        
-        // Clean the URI by stripping extra query parameters to prevent Discord 100-char value truncation
+
         let cleanUri = track.uri || '';
         try {
           if (cleanUri.startsWith('http')) {
@@ -98,7 +97,7 @@ export default {
         connectedNodes.sort((a, b) => {
           const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
           const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
-          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) - 
+          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) -
                  ((statsB.cpu.systemLoad * 100) + statsB.players + (b.ping / 10));
         });
         const bestNode = connectedNodes[0];
@@ -138,14 +137,13 @@ export default {
         }
       }
 
-      const isPlaylist = query.includes('list=') || query.includes('/playlist/') || query.includes('/album/') || (tracks.length > 1 && /^https?:\/\//.test(query));
+      const isPlaylist = query.includes('list=') || query.includes('/playlist/') || query.includes('/album/') || (tracks.length > 1 && /^https?:\/\
       const queuePosition = player.playlist.tracks.length - player.currentIndex;
 
       if (isPlaylist) {
         tracks.forEach(t => t.requesterTag = interaction.user.tag);
         player.playlist.tracks.push(...tracks);
 
-        // Calculate total duration for playlist
         const totalMs = tracks.reduce((acc, t) => acc + (t.durationMs || 0), 0);
         const hrs = Math.floor(totalMs / 3600000);
         const mins = Math.floor((totalMs % 3600000) / 60000);
@@ -223,7 +221,7 @@ export default {
         connectedNodes.sort((a, b) => {
           const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
           const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
-          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) - 
+          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) -
                  ((statsB.cpu.systemLoad * 100) + statsB.players + (b.ping / 10));
         });
         const bestNode = connectedNodes[0];
@@ -263,14 +261,13 @@ export default {
         }
       }
 
-      const isPlaylist = query.includes('list=') || query.includes('/playlist/') || query.includes('/album/') || (tracks.length > 1 && /^https?:\/\//.test(query));
+      const isPlaylist = query.includes('list=') || query.includes('/playlist/') || query.includes('/album/') || (tracks.length > 1 && /^https?:\/\
       const queuePosition = player.playlist.tracks.length - player.currentIndex;
 
       if (isPlaylist) {
         tracks.forEach(t => t.requesterTag = message.author.tag);
         player.playlist.tracks.push(...tracks);
 
-        // Calculate total duration for playlist
         const totalMs = tracks.reduce((acc, t) => acc + (t.durationMs || 0), 0);
         const hrs = Math.floor(totalMs / 3600000);
         const mins = Math.floor((totalMs % 3600000) / 60000);

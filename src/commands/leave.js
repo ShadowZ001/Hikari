@@ -6,11 +6,6 @@ export default {
   name: 'leave',
   description: 'Bot leaves the voice channel.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >leave).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const client = message.client;
@@ -26,7 +21,6 @@ export default {
         return message.reply(card).catch(console.error);
       }
 
-      // Disconnect
       try {
         if (player && player.shoukakuPlayer) {
           player.shoukakuPlayer.removeAllListeners();
@@ -36,7 +30,6 @@ export default {
         console.error(err);
       }
 
-      // Cleanup player timeouts and state
       if (player) {
         if (player.timeoutId) {
           clearTimeout(player.timeoutId);
@@ -52,10 +45,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /leave).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const client = interaction.client;
@@ -71,7 +60,6 @@ export default {
         return interaction.reply({ ...card, ephemeral: false }).catch(console.error);
       }
 
-      // Disconnect
       try {
         if (player && player.shoukakuPlayer) {
           player.shoukakuPlayer.removeAllListeners();
@@ -81,7 +69,6 @@ export default {
         console.error(err);
       }
 
-      // Cleanup player timeouts and state
       if (player) {
         if (player.timeoutId) {
           clearTimeout(player.timeoutId);

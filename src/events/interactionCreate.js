@@ -23,7 +23,7 @@ async function processSettingsSubmit(interaction, client) {
     if (interaction.fields) {
       const volInput = interaction.fields.getTextInputValue('settings_volume');
       vol = parseInt(volInput, 10);
-      
+
       const autoplayInput = interaction.fields.getTextInputValue('settings_autoplay')?.toLowerCase().trim();
       autoplay = autoplayInput === 'yes' || autoplayInput === 'true' || autoplayInput === 'y';
 
@@ -72,7 +72,7 @@ async function processSettingsSubmit(interaction, client) {
 
   const player = client.activePlayers?.get(temp.guildId);
   if (player) {
-    const changes = 
+    const changes =
       player.volume !== vol ||
       player.autoplay !== autoplay ||
       player.liked !== liked ||
@@ -97,13 +97,13 @@ async function processSettingsSubmit(interaction, client) {
       player.currentIndex -= 1;
       triggerPlayPrevious = true;
     }
-    player.playPrevious = false; // Reset the toggle
+    player.playPrevious = false;
 
     if (triggerPlayPrevious) {
       const { playTrack } = await import('../utils/playerManager.js');
       await playTrack(client, temp.guildId, interaction.channel);
     } else {
-      // Update main player card
+
       const payload = PlayerLayout.playingCard(player.currentTrack, player.requester, player);
       await player.message.edit(payload).catch(err => console.error(err));
     }
@@ -123,20 +123,15 @@ async function processSettingsSubmit(interaction, client) {
 export default {
   name: Events.InteractionCreate,
   once: false,
-  /**
-   * Fired when an interaction (slash command, button click, select menu, etc.) is created.
-   * @param {import('discord.js').Interaction} interaction 
-   * @param {import('discord.js').Client} client 
-   */
+
   async execute(interaction, client) {
-    // Check if user is blacklisted bot-wide
+
     if (client.blacklist?.has(interaction.user.id)) {
       const warnEmoji = EMOJIS.warnnn || '⚠️';
       const card = PrefixLayout.messageCard(warnEmoji, '**You are blacklisted from using this bot.**');
       return interaction.reply({ ...card, ephemeral: true }).catch(console.error);
     }
 
-    // Check if channel is ignored in this server
     const guildId = interaction.guildId;
     if (guildId) {
       if (!client.ignoredChannels) {
@@ -156,11 +151,10 @@ export default {
       }
 
       if (ignoredList.includes(interaction.channelId)) {
-        return; // Silently ignore all slash commands, buttons, and menus in this channel
+        return;
       }
     }
 
-    // 1. Handle Slash Commands
     if (interaction.isChatInputCommand()) {
       const command = client.commands.get(interaction.commandName) ||
                       client.commands.find(cmd => cmd.aliases?.includes(interaction.commandName));
@@ -174,7 +168,7 @@ export default {
         await command.executeSlash(interaction);
       } catch (error) {
         console.error(`[Hikari] Error executing slash command /${interaction.commandName}:`, error);
-        
+
         const errorMessage = { content: 'There was an error while executing this command!', ephemeral: true };
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp(errorMessage).catch(err => console.error('[Hikari] Failed to send error followUp:', err));
@@ -185,7 +179,6 @@ export default {
       return;
     }
 
-    // Handle Autocomplete Interactions
     if (interaction.isAutocomplete()) {
       const command = client.commands.get(interaction.commandName) ||
                       client.commands.find(cmd => cmd.aliases?.includes(interaction.commandName));
@@ -200,15 +193,13 @@ export default {
       return;
     }
 
-    // 2. Handle Button Component Clicks
     if (interaction.isButton()) {
       const { customId, guildId, user } = interaction;
 
-      // Handle Playlist Player Buttons
       if (customId.startsWith('pl_')) {
         try {
           const parts = customId.split('_');
-          const action = parts[1]; // pause, skip, stop, settings
+          const action = parts[1];
           const targetGuildId = parts[2];
 
           const player = client.activePlayers?.get(targetGuildId);
@@ -227,18 +218,18 @@ export default {
             }
             const payload = PlayerLayout.playingCard(player.currentTrack, player.requester, player);
             await interaction.update(payload);
-          } 
+          }
           else if (action === 'skip') {
             const channel = interaction.channel;
             const { skipTrack } = await import('../utils/playerManager.js');
             await interaction.deferUpdate();
             await skipTrack(client, targetGuildId, channel);
-          } 
+          }
           else if (action === 'stop') {
             const { stopTrack } = await import('../utils/playerManager.js');
             await interaction.deferUpdate();
             await stopTrack(client, targetGuildId);
-          } 
+          }
           else if (action === 'settings') {
             client.tempSettings = client.tempSettings || new Map();
             const temp = {
@@ -261,11 +252,10 @@ export default {
         return;
       }
 
-      // Handle Enqueue Layout Buttons (Remove / Play Next)
       if (customId.startsWith('enqueue_')) {
         try {
           const parts = customId.split('_');
-          const action = parts[1]; // remove or playnext
+          const action = parts[1];
           const trackIndex = parseInt(parts[2], 10);
           const player = client.activePlayers?.get(guildId);
 
@@ -296,11 +286,10 @@ export default {
         return;
       }
 
-      // Handle Queue Layout Pagination
       if (customId.startsWith('queue_')) {
         try {
           const parts = customId.split('_');
-          const action = parts[1]; // prev or next
+          const action = parts[1];
           const page = parseInt(parts[2], 10);
           const triggerUserId = parts[3];
 
@@ -330,11 +319,10 @@ export default {
         return;
       }
 
-      // Handle Liked Layout Pagination
       if (customId.startsWith('liked_')) {
         try {
           const parts = customId.split('_');
-          const action = parts[1]; // prev or next
+          const action = parts[1];
           const page = parseInt(parts[2], 10);
           const triggerUserId = parts[3];
 
@@ -361,7 +349,6 @@ export default {
         return;
       }
 
-      // Handle Settings Toggles / Submit
       if (customId.startsWith('settings_')) {
         if (customId === 'settings_submit') {
           try {
@@ -373,7 +360,6 @@ export default {
         return;
       }
 
-      // Handle 24/7 Enable/Disable Buttons
       if (customId === '247_enable' || customId === '247_disable') {
         try {
           if (!client.status247) {
@@ -397,11 +383,9 @@ export default {
       return;
     }
 
-    // 3. Handle Select Menu Submissions
     if (interaction.isStringSelectMenu()) {
       const { customId, values, message, user } = interaction;
 
-      // Handle Loop Settings Selection in settings menu
       if (customId === 'settings_loop') {
         const temp = client.tempSettings?.get(user.id);
         if (temp) {
@@ -411,17 +395,16 @@ export default {
         return;
       }
 
-      // Handle Statistics Category Select Menu
       if (customId === 'stats_select') {
         try {
           const category = values[0];
 
           const headerComponent = message.components[0]?.components[0];
           const headerText = headerComponent?.content || '';
-          
+
           const regex = /Requested by (.+?)(?: - | • Last Updated: )(.+?)$/m;
           const match = headerText.match(regex);
-          
+
           let username = interaction.user.tag;
           let timeString = new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',
@@ -470,7 +453,6 @@ export default {
       return;
     }
 
-    // 4. Handle Modal Submissions
     if (interaction.isModalSubmit()) {
       const { customId, user } = interaction;
       if (customId === 'settings_submit') {
@@ -486,7 +468,7 @@ export default {
         const temp = client.tempSettings?.get(user.id);
         const volInput = interaction.fields.getTextInputValue('volume_input');
         const vol = parseInt(volInput, 10);
-        
+
         if (temp && !isNaN(vol) && vol >= 1 && vol <= 100) {
           temp.volume = vol;
           await interaction.update(PlayerLayout.settingsCard(temp));

@@ -6,17 +6,11 @@ export default {
   name: 'setprefix',
   description: 'Set a custom prefix for this server.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >setprefix).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const guildId = message.guildId;
       if (!guildId) return;
 
-      // Initialize client memory cache if missing
       if (!message.client.guildPrefixes) {
         message.client.guildPrefixes = new Map();
       }
@@ -28,7 +22,6 @@ export default {
         return message.reply(PrefixLayout.messageCard(infoEmoji, 'Provide a new prefix.'));
       }
 
-      // Update prefix in database
       let config = await GuildConfig.findOne({ guildId });
       if (!config) {
         config = new GuildConfig({ guildId, ignoredChannels: [], prefix: newPrefix });
@@ -37,7 +30,6 @@ export default {
       }
       await config.save();
 
-      // Update memory cache
       message.client.guildPrefixes.set(guildId, newPrefix);
 
       const checkEmoji = EMOJIS.checkk || '<:checkk:1498633200346464276>';
@@ -47,10 +39,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /setprefix).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const guildId = interaction.guildId;
@@ -62,7 +50,6 @@ export default {
 
       const newPrefix = interaction.options.getString('prefix', true);
 
-      // Update database
       let config = await GuildConfig.findOne({ guildId });
       if (!config) {
         config = new GuildConfig({ guildId, ignoredChannels: [], prefix: newPrefix });
@@ -71,7 +58,6 @@ export default {
       }
       await config.save();
 
-      // Update memory cache
       interaction.client.guildPrefixes.set(guildId, newPrefix);
 
       const checkEmoji = EMOJIS.checkk || '<:checkk:1498633200346464276>';

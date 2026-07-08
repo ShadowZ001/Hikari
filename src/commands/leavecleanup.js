@@ -26,7 +26,6 @@ export default {
       const removedTracks = [];
       const removedUsers = new Set();
 
-      // Clean from player.currentIndex + 1 to end of playlist
       const upcoming = player.playlist.tracks.slice(player.currentIndex + 1);
       const keep = player.playlist.tracks.slice(0, player.currentIndex + 1);
 
@@ -78,7 +77,6 @@ export default {
       const removedTracks = [];
       const removedUsers = new Set();
 
-      // Clean from player.currentIndex + 1 to end of playlist
       const upcoming = player.playlist.tracks.slice(player.currentIndex + 1);
       const keep = player.playlist.tracks.slice(0, player.currentIndex + 1);
 

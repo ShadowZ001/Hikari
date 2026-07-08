@@ -39,7 +39,7 @@ export default {
         connectedNodes.sort((a, b) => {
           const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
           const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
-          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) - 
+          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) -
                  ((statsB.cpu.systemLoad * 100) + statsB.players + (b.ping / 10));
         });
         const bestNode = connectedNodes[0];
@@ -74,7 +74,6 @@ export default {
         client.activePlayers.set(interaction.guildId, player);
       }
 
-      // Add all liked songs to player playlist
       const songs = userLiked.songs.map(song => ({
         title: song.title,
         uri: song.uri,
@@ -135,7 +134,7 @@ export default {
         connectedNodes.sort((a, b) => {
           const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
           const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
-          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) - 
+          return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) -
                  ((statsB.cpu.systemLoad * 100) + statsB.players + (b.ping / 10));
         });
         const bestNode = connectedNodes[0];
@@ -170,7 +169,6 @@ export default {
         client.activePlayers.set(message.guildId, player);
       }
 
-      // Add all liked songs to player playlist
       const songs = userLiked.songs.map(song => ({
         title: song.title,
         uri: song.uri,

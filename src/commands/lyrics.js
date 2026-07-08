@@ -8,7 +8,7 @@ class LyricsManager {
       const url = `https://lrclib.net/api/search?track_name=${encodeURIComponent(title)}&artist_name=${encodeURIComponent(artist)}`;
       const res = await fetch(url);
       if (!res.ok) return null;
-      
+
       const data = await res.json();
       if (data && data.length > 0) {
         const result = data[0];
@@ -322,8 +322,7 @@ async function showLiveSyncLyrics(client, message, track, syncedLines, player, a
         const container = new ContainerBuilder();
         const headerDisplay = new TextDisplayBuilder().setContent(`### 🎙️ Live Lyrics: ${track.title}`);
         const divider1 = new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small);
-        
-        // Progress display format MM:SS / MM:SS
+
         const formatTime = (ms) => {
           const totalSec = Math.floor(ms / 1000);
           return `${Math.floor(totalSec / 60)}:${(totalSec % 60).toString().padStart(2, '0')}`;
@@ -368,7 +367,7 @@ async function showLiveSyncLyrics(client, message, track, syncedLines, player, a
   };
 
   await updateLyrics();
-  updateInterval = setInterval(updateLyrics, 1000); // Update every 1 second to avoid rate limits
+  updateInterval = setInterval(updateLyrics, 1000);
 
   const collector = message.createMessageComponentCollector({
     componentType: ComponentType.Button,

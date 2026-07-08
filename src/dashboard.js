@@ -6,10 +6,6 @@ import path from 'path';
 import Playlist from './models/Playlist.js';
 import Liked from './models/Liked.js';
 
-/**
- * Initializes and starts the dashboard server on the allocated port.
- * @param {import('discord.js').Client} client 
- */
 export function startDashboardServer(client) {
   const app = express();
   const PORT = process.env.PORT || 5000;
@@ -24,17 +20,13 @@ export function startDashboardServer(client) {
     JWT_SECRET
   } = process.env;
 
-  // Ensure variables exist
   if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET || !DISCORD_REDIRECT_URI || !JWT_SECRET) {
     console.error('[Dashboard Server] Error: Missing required dashboard variables (DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, DISCORD_REDIRECT_URI, JWT_SECRET) in .env!');
-    // We don't crash the bot, but we log a heavy warning
+
     console.warn('[Dashboard Server] Dashboard server will not start due to missing environment variables.');
     return;
   }
 
-  /**
-   * Helper to determine redirect URI dynamically (backward compatibility for Vite proxy)
-   */
   function getRedirectUri(req) {
     const forwardedHost = req.headers['x-forwarded-host'];
     if (forwardedHost) {
@@ -44,8 +36,6 @@ export function startDashboardServer(client) {
     }
     return DISCORD_REDIRECT_URI;
   }
-
-  // --- OAUTH2 LOGIN ROUTES ---
 
   app.get('/api/auth/login', (req, res) => {
     const redirectUri = getRedirectUri(req);
@@ -87,7 +77,6 @@ export function startDashboardServer(client) {
       const tokenData = await tokenResponse.json();
       const accessToken = tokenData.access_token;
 
-      // Fetch user profile
       const userResponse = await fetch('https://discord.com/api/v10/users/@me', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
@@ -96,7 +85,6 @@ export function startDashboardServer(client) {
       }
       const userData = await userResponse.json();
 
-      // Fetch user's guilds
       const guildsResponse = await fetch('https://discord.com/api/v10/users/@me/guilds', {
         headers: { Authorization: `Bearer ${accessToken}` }
       });
@@ -134,12 +122,17 @@ export function startDashboardServer(client) {
 
       res.cookie('hikari_session', token, {
         httpOnly: true,
-        secure: false, // Set to true in production HTTPS
+        secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         path: '/'
       });
 
-      res.redirect('/');
+      try {
+        const frontendUrl = new URL(redirectUri).origin;
+        res.redirect(`${frontendUrl}/`);
+      } catch (err) {
+        res.redirect('/');
+      }
     } catch (err) {
       console.error('[Dashboard Server] Error during callback handling:', err);
       res.status(500).send('An internal server error occurred.');
@@ -154,8 +147,7 @@ export function startDashboardServer(client) {
 
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      
-      // Update joined status on-the-fly
+
       if (decoded && decoded.guilds) {
         const botGuildIds = new Set(client.guilds.cache.map(g => g.id));
         decoded.guilds = decoded.guilds.map(guild => ({
@@ -164,7 +156,7 @@ export function startDashboardServer(client) {
         }));
         decoded.guildsVerified = true;
       }
-      
+
       res.json({ loggedIn: true, user: decoded });
     } catch (err) {
       res.clearCookie('hikari_session');
@@ -176,8 +168,6 @@ export function startDashboardServer(client) {
     res.clearCookie('hikari_session');
     res.json({ success: true });
   });
-
-  // --- LIKED SONGS API ---
 
   app.get('/api/auth/liked', async (req, res) => {
     const token = req.cookies.hikari_session;
@@ -233,8 +223,6 @@ export function startDashboardServer(client) {
       res.status(500).json({ error: 'Failed to clear liked songs' });
     }
   });
-
-  // --- PLAYLISTS API ---
 
   app.get('/api/auth/playlists', async (req, res) => {
     const token = req.cookies.hikari_session;
@@ -341,7 +329,6 @@ export function startDashboardServer(client) {
         tracks = playlist.tracks;
       }
 
-      // Playback execution inside the SAME NODE PROCESS
       const guild = client.guilds.cache.get(guildId);
       if (!guild) {
         return res.status(404).json({ error: 'Guild not found' });
@@ -352,7 +339,7 @@ export function startDashboardServer(client) {
         return res.status(400).json({ error: 'You must be in a voice channel in that server to play music.' });
       }
 
-      const textChannel = guild.channels.cache.find(c => c.isTextBased() && c.permissionsFor(guild.members.me).has('SendMessages')) 
+      const textChannel = guild.channels.cache.find(c => c.isTextBased() && c.permissionsFor(guild.members.me).has('SendMessages'))
         || guild.systemChannel;
 
       if (!textChannel) {
@@ -436,8 +423,6 @@ export function startDashboardServer(client) {
     }
   });
 
-  // --- BOT REAL-TIME ACTIVITY & STATS ---
-
   app.get('/api/auth/activity', async (req, res) => {
     const token = req.cookies.hikari_session;
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
@@ -495,8 +480,7 @@ export function startDashboardServer(client) {
     } catch (err) {
       console.error('[Dashboard Server] Error reading bot_stats.json:', err);
     }
-    
-    // Fallback directly to real, live in-memory stats
+
     res.json({
       serversCount: client.guilds.cache.size,
       usersCount: client.guilds.cache.reduce((acc, g) => acc + (g.memberCount || 0), 0),
@@ -509,7 +493,6 @@ export function startDashboardServer(client) {
     });
   });
 
-  // Start Express API server
   app.listen(PORT, () => {
     console.log(`\x1b[35m🛜 [Dashboard] Server online on port ${PORT}\x1b[0m`);
   });

@@ -4,14 +4,9 @@ export default {
   name: 'ping',
   description: 'Checks the bot connection latency and system stats.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >ping).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
-      // Calculate round-trip message latency
+
       const msgLatency = Date.now() - message.createdTimestamp;
       const apiLatency = message.client.ws.ping;
       const uptimeMs = message.client.uptime;
@@ -31,13 +26,9 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /ping).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
-      // Calculate round-trip interaction latency
+
       const msgLatency = Date.now() - interaction.createdTimestamp;
       const apiLatency = interaction.client.ws.ping;
       const uptimeMs = interaction.client.uptime;

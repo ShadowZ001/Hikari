@@ -2,10 +2,6 @@ import Playlist from '../models/Playlist.js';
 import { PlaylistLayout } from '../components/PlaylistLayout.js';
 import { EMOJIS } from '../emojis.js';
 
-/**
- * Returns formatted time string matching H:MM AM/PM.
- * @returns {string}
- */
 function getFormattedTime() {
   return new Date().toLocaleTimeString('en-US', {
     hour: 'numeric',
@@ -19,10 +15,6 @@ export default {
   description: 'List all of your playlists.',
   category: 'Playlist',
 
-  /**
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const playlists = await Playlist.find({ userId: message.author.id }).sort({ updatedAt: -1 });
@@ -34,7 +26,7 @@ export default {
 
       const username = message.author.username;
       const timeString = getFormattedTime();
-      
+
       const layout = PlaylistLayout.listCard(username, timeString, playlists);
       return message.reply(layout);
     } catch (error) {
@@ -42,9 +34,6 @@ export default {
     }
   },
 
-  /**
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const playlists = await Playlist.find({ userId: interaction.user.id }).sort({ updatedAt: -1 });

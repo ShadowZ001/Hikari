@@ -66,7 +66,7 @@ export default {
       );
 
       const currentFilter = player.currentFilter || "None";
-      
+
       const container = new ContainerBuilder();
       const headerDisplay = new TextDisplayBuilder().setContent(`### 🎛️ Audio Filters`);
       const divider = new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small);

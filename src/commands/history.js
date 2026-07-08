@@ -22,7 +22,6 @@ export default {
       const headerDisplay = new TextDisplayBuilder().setContent(`### 📜 Recently Played Songs`);
       const divider = new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small);
 
-      // Display latest played first
       const reversed = [...history].reverse().slice(0, 10);
       let content = '';
       reversed.forEach((track, i) => {
@@ -62,7 +61,6 @@ export default {
       const headerDisplay = new TextDisplayBuilder().setContent(`### 📜 Recently Played Songs`);
       const divider = new SeparatorBuilder().setDivider(true).setSpacing(SeparatorSpacingSize.Small);
 
-      // Display latest played first
       const reversed = [...history].reverse().slice(0, 10);
       let content = '';
       reversed.forEach((track, i) => {

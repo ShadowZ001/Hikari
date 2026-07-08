@@ -23,10 +23,9 @@ const PlaylistSchema = new mongoose.Schema({
     default: []
   }
 }, {
-  timestamps: true // Adds createdAt and updatedAt
+  timestamps: true
 });
 
-// Ensure unique playlist name per user
 PlaylistSchema.index({ userId: 1, name: 1 }, { unique: true });
 
 export default mongoose.model('Playlist', PlaylistSchema);

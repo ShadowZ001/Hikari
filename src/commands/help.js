@@ -3,12 +3,6 @@ import { PlaylistLayout } from '../components/PlaylistLayout.js';
 import GuildConfig from '../models/GuildConfig.js';
 import { CONFIG, EMOJIS } from '../emojis.js';
 
-/**
- * Resolves the guild-specific command prefix.
- * @param {import('discord.js').Client} client 
- * @param {string} guildId 
- * @returns {Promise<string>}
- */
 async function getPrefix(client, guildId) {
   if (!guildId) return CONFIG.prefix;
   if (!client.guildPrefixes) {
@@ -31,19 +25,14 @@ async function getPrefix(client, guildId) {
 export default {
   name: 'help',
   description: 'Displays the list of all available commands or specific command info.',
-  
-  /**
-   * Execution handler for prefix commands (e.g. >help [command]).
-   * @param {import('discord.js').Message} message The original Discord message
-   * @param {string[]} args Command arguments
-   */
+
   async execute(message, args) {
     try {
       const prefix = await getPrefix(message.client, message.guildId);
       const query = args[0]?.toLowerCase().trim();
 
       if (query) {
-        const command = message.client.commands.get(query) || 
+        const command = message.client.commands.get(query) ||
                         message.client.commands.find(cmd => cmd.aliases?.includes(query));
 
         if (!command) {
@@ -63,17 +52,13 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /help [command]).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction The slash command interaction
-   */
   async executeSlash(interaction) {
     try {
       const prefix = await getPrefix(interaction.client, interaction.guildId);
       const query = interaction.options.getString('command')?.toLowerCase().trim();
 
       if (query) {
-        const command = interaction.client.commands.get(query) || 
+        const command = interaction.client.commands.get(query) ||
                         interaction.client.commands.find(cmd => cmd.aliases?.includes(query));
 
         if (!command) {

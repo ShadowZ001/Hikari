@@ -10,7 +10,7 @@ export default {
     {
       name: 'speed',
       description: 'Playback speed (0.25 - 3.0)',
-      type: 10, // NUMBER
+      type: 10,
       required: false
     }
   ],

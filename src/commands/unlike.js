@@ -200,7 +200,6 @@ export default {
 
           await currentUserLiked.save();
 
-          // Reset page if current page is now empty
           const newTotalPages = Math.ceil(currentUserLiked.songs.length / songsPerPage);
           if (currentPage >= newTotalPages && newTotalPages > 0) {
             currentPage = newTotalPages - 1;
@@ -214,7 +213,7 @@ export default {
             const container = generateContainer(currentPage, currentUserLiked.songs);
             const selectMenu = generateSelectMenu(currentPage, currentUserLiked.songs);
             const buttons = generateButtons(currentPage, currentUserLiked.songs);
-            
+
             container.addActionRowComponents(selectMenu);
             container.addActionRowComponents(buttons);
 
@@ -232,7 +231,7 @@ export default {
           const container = generateContainer(currentPage, currentFavs);
           const selectMenu = generateSelectMenu(currentPage, currentFavs);
           const buttons = generateButtons(currentPage, currentFavs);
-          
+
           container.addActionRowComponents(selectMenu);
           container.addActionRowComponents(buttons);
 
@@ -249,7 +248,7 @@ export default {
           const container = generateContainer(currentPage, currentFavs);
           const selectMenu = generateSelectMenu(currentPage, currentFavs);
           const buttons = generateButtons(currentPage, currentFavs);
-          
+
           container.addActionRowComponents(selectMenu);
           container.addActionRowComponents(buttons);
 

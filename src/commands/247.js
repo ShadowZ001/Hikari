@@ -4,38 +4,27 @@ export default {
   name: '247',
   description: 'Toggles or checks the bot 24/7 connection status.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >247).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const client = message.client;
       const guildId = message.guildId;
 
-      // Initialize state map if it doesn't exist
       if (!client.status247) {
         client.status247 = new Map();
       }
 
-      // Retrieve state for this server, default to 'Disabled'
       const status = client.status247.get(guildId) || 'Disabled';
       const username = message.author.tag;
 
       const layout = new Status247Layout({ status, username });
       await message.reply(layout.toPayload());
-      
+
       console.log(`[Hikari] 24/7 status card sent to ${message.author.tag} in prefix mode`);
     } catch (error) {
       console.error('[Hikari] Error executing prefix 247 command:', error);
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /247).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const client = interaction.client;

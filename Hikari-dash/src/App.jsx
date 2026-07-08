@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Radio, 
-  Music, 
-  Shield, 
-  Search, 
-  ArrowRight, 
-  Play, 
-  Sparkles, 
-  Volume2, 
+import {
+  Radio,
+  Music,
+  Shield,
+  Search,
+  ArrowRight,
+  Play,
+  Sparkles,
+  Volume2,
   Disc,
   LogOut,
   Server,
@@ -45,13 +45,13 @@ function App() {
 
   const [likedSongs, setLikedSongs] = useState([]);
   const [likedSearchQuery, setLikedSearchQuery] = useState('');
-  
+
   const [playlists, setPlaylists] = useState([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState({ id: 'liked', name: 'Liked Music', tracks: [], isBuiltIn: true });
   const [newPlaylistName, setNewPlaylistName] = useState('');
   const [selectedServerId, setSelectedServerId] = useState('');
   const [activityPlayers, setActivityPlayers] = useState([]);
-  
+
   const user = session.user;
 
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
@@ -152,7 +152,7 @@ function App() {
           thumbnail: s.thumbnail,
           durationMs: s.durationMs
         }));
-        // Only update state if tracks have actually changed to avoid infinite loop
+
         if (JSON.stringify(current.tracks) !== JSON.stringify(mappedTracks)) {
           return { ...current, tracks: mappedTracks };
         }
@@ -240,7 +240,7 @@ function App() {
         .catch(err => showToast(err.message, 'error'));
     });
   };
-  
+
   const getTopArtistsCount = () => {
     const uniqueArtists = new Set(
       likedSongs
@@ -287,8 +287,6 @@ function App() {
       return titleMatch || artistMatch;
     });
 
-
-  // Poll bot stats and activity every 3 seconds if logged in
   useEffect(() => {
     if (session.loggedIn) {
       const fetchData = () => {
@@ -319,21 +317,20 @@ function App() {
     const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    
+
     if (days > 0) return `${days}d ${hours}h ${minutes}m`;
     if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
     if (minutes > 0) return `${minutes}m ${seconds}s`;
     return `${seconds}s`;
   };
 
-  // Fetch session on component mount
   useEffect(() => {
     fetch('/api/auth/user')
       .then(res => res.json())
       .then(data => {
         setSession(data);
         setLoading(false);
-        // If logged in, trigger a brief premium sync animation
+
         if (data.loggedIn) {
           setLoadingDashboard(true);
           const timer = setTimeout(() => {
@@ -349,7 +346,7 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    // Trigger login animation first before redirecting to Discord OAuth2
+
     setLoadingDashboard(true);
     setTimeout(() => {
       window.location.href = '/api/auth/login';
@@ -372,18 +369,16 @@ function App() {
       });
   };
 
-  // Mock landing page songs
   const mockSongs = [
     { name: 'Night drive phonk', category: 'TOP RESULT', plays: 'Queue instantly' },
     { name: 'Overview updates live', category: 'SERVER SYNC', plays: 'No manual refresh' },
     { name: '24/7 and voice-role locks', category: 'OWNER-SAFE', plays: 'Protected settings' }
   ];
 
-  const userAvatarUrl = user && user.avatar 
+  const userAvatarUrl = user && user.avatar
     ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`
     : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-  // Filter actual user guilds
   const filteredGuilds = user && user.guilds
     ? user.guilds.filter(guild => guild.name.toLowerCase().includes(serverSearchQuery.toLowerCase()))
     : [];
@@ -396,7 +391,6 @@ function App() {
     ? user.guilds.filter(guild => !guild.joined).length
     : 0;
 
-  // 🔄 FULL SCREEN LOADING TRANSITION
   if (loadingDashboard) {
     return (
       <div className="full-screen-loader">
@@ -418,8 +412,8 @@ function App() {
 
   return (
     <div className="landing-wrapper">
-      
-      {/* 🚀 NAVBAR */}
+
+      {}
       <header className="navbar">
         <div className="nav-container">
           {session.loggedIn && user ? (
@@ -443,30 +437,30 @@ function App() {
               </div>
             </div>
           )}
-          
+
           {loading ? (
             <div className="session-loader"></div>
           ) : session.loggedIn && user ? (
             <div className="nav-actions-right">
-              <button 
+              <button
                 className={`btn-nav-tab-servers ${currentTab === 'servers' ? 'active' : ''}`}
                 onClick={() => setCurrentTab('servers')}
               >
                 Servers
               </button>
-              <button 
+              <button
                 className={`btn-nav-tab-servers ${currentTab === 'liked' ? 'active' : ''}`}
                 onClick={() => setCurrentTab('liked')}
               >
                 Liked Songs
               </button>
-              <button 
+              <button
                 className={`btn-nav-tab-servers ${currentTab === 'playlists' ? 'active' : ''}`}
                 onClick={() => setCurrentTab('playlists')}
               >
                 Playlists
               </button>
-              <button 
+              <button
                 className={`btn-nav-tab-servers ${currentTab === 'activity' ? 'active' : ''}`}
                 onClick={() => setCurrentTab('activity')}
               >
@@ -484,19 +478,17 @@ function App() {
         </div>
       </header>
 
-      {/* 🌌 MAIN CONTENT */}
+      {}
       <main className="main-content">
-        
+
         {session.loggedIn && user ? (
-          /* =========================================================
-             👑 AUTHENTICATED SERVERS PAGE (Replicating Screenshots)
-             ========================================================= */
+
           <div className="dashboard-page-wrapper">
-            
-            {/* 🖥️ SERVERS TAB */}
+
+            {}
             {currentTab === 'servers' && (
               <div className="tab-fade-in">
-                {/* Header section with Choose Server */}
+                {}
                 <div className="choose-server-header">
                   <div className="choose-logo-wrapper">
                     <div className="circle-logo-purple">H</div>
@@ -507,7 +499,7 @@ function App() {
                   </div>
                 </div>
 
-                {/* Profile & Logout pill rows */}
+                {}
                 <div className="profile-actions-row">
                   <div className="profile-pill">
                     <img src={userAvatarUrl} alt={user.username} className="profile-pill-avatar" />
@@ -519,7 +511,7 @@ function App() {
                   </button>
                 </div>
 
-                {/* 🖥️ Main Info visual card (Switch between servers card) */}
+                {}
                 <section className="switch-servers-section">
                   <div className="switch-card borderless-panel">
                     <div className="switch-badge">
@@ -531,18 +523,18 @@ function App() {
                       without losing the <span className="gradient-text">music flow.</span>
                     </h2>
                     <p className="switch-desc">
-                      Any member can open dashboards where Hikari is already in the server. Manage permissions 
+                      Any member can open dashboards where Hikari is already in the server. Manage permissions
                       still control who can change settings and invite the bot elsewhere.
                     </p>
 
-                    {/* Metrics capsules list */}
+                    {}
                     <div className="metrics-capsules-list">
                       <span className="metric-pill purple-pill">{filteredGuilds.length} Servers visible</span>
                       <span className="metric-pill dark-pill">{joinedCount} Hikari already joined</span>
                       <span className="metric-pill dark-pill">{inviteRequiredCount} Invite required</span>
                     </div>
 
-                    {/* Main Anime Girl image card showcase */}
+                    {}
                     <div className="switch-image-showcase">
                       <img src="/Hikari-pfp.jpg" alt="Hikari Banner Visual" className="switch-showcase-img" />
                       <div className="glass-overlay-card">
@@ -556,11 +548,11 @@ function App() {
                   </div>
                 </section>
 
-                {/* 📊 Statistics grid cards */}
+                {}
                 <section className="stats-grid-section">
                   <div className="stats-grid">
-                    
-                    {/* Stat 1: Servers */}
+
+                    {}
                     <div className="stat-card">
                       <div className="stat-left">
                         <span className="stat-category">SERVERS</span>
@@ -570,7 +562,7 @@ function App() {
                       <LayoutGrid className="stat-icon" size={18} />
                     </div>
 
-                    {/* Stat 2: Users */}
+                    {}
                     <div className="stat-card">
                       <div className="stat-left">
                         <span className="stat-category">USERS</span>
@@ -580,7 +572,7 @@ function App() {
                       <Users className="stat-icon" size={18} />
                     </div>
 
-                    {/* Stat 3: Commands */}
+                    {}
                     <div className="stat-card">
                       <div className="stat-left">
                         <span className="stat-category">COMMANDS</span>
@@ -590,7 +582,7 @@ function App() {
                       <Cpu className="stat-icon" size={18} />
                     </div>
 
-                    {/* Stat 4: Uptime */}
+                    {}
                     <div className="stat-card">
                       <div className="stat-left">
                         <span className="stat-category">UPTIME</span>
@@ -600,7 +592,7 @@ function App() {
                       <Clock className="stat-icon" size={18} />
                     </div>
 
-                    {/* Stat 5: Latency */}
+                    {}
                     <div className="stat-card">
                       <div className="stat-left">
                         <span className="stat-category">LATENCY</span>
@@ -613,16 +605,16 @@ function App() {
                   </div>
                 </section>
 
-                {/* 🧱 Lower Modules cards */}
+                {}
                 <section className="modules-list-section">
                   <div className="modules-stack">
-                    
-                    {/* Liked songs module card */}
+
+                    {}
                     <div className="module-item-card clickable-card" onClick={() => setCurrentTab('liked')}>
                       <span className="module-card-badge"><Heart size={10} /> LIKED SONGS</span>
                       <h3 className="module-card-title">Open your liked songs</h3>
                       <p className="module-card-desc">
-                        Review every track you saved with Hikari's like commands, remove old favorites, and 
+                        Review every track you saved with Hikari's like commands, remove old favorites, and
                         keep your personal collection clean before jumping into a server.
                       </p>
                     </div>
@@ -632,7 +624,7 @@ function App() {
                       <span className="module-card-badge"><ListMusic size={10} /> PLAYLISTS</span>
                       <h3 className="module-card-title">Build personal playlists</h3>
                       <p className="module-card-desc">
-                        Create your own playlist sets, drop songs into them from the dashboard, and queue the 
+                        Create your own playlist sets, drop songs into them from the dashboard, and queue the
                         whole stack into any joined server you share with Hikari.
                       </p>
                     </div>
@@ -642,7 +634,7 @@ function App() {
                       <span className="module-card-badge"><Activity size={10} /> JOINED ACTIVITY</span>
                       <h3 className="module-card-title">See every active server</h3>
                       <p className="module-card-desc">
-                        Watch Hikari's activity across all playing servers with current tracks, queue counts, 
+                        Watch Hikari's activity across all playing servers with current tracks, queue counts,
                         listeners, and instant jump-ins for servers you share.
                       </p>
                     </div>
@@ -650,7 +642,7 @@ function App() {
                   </div>
                 </section>
 
-                {/* 🛡️ Your Servers List Grid Section */}
+                {}
                 <section className="servers-list-section">
                   <div className="servers-list-header-row">
                     <div className="servers-header-left">
@@ -659,13 +651,13 @@ function App() {
                         Search your list, jump into joined servers, or invite Hikari where you have access.
                       </p>
                     </div>
-                    
-                    {/* Server Search Input */}
+
+                    {}
                     <div className="server-search-wrapper">
                       <Search size={14} className="server-search-icon" />
-                      <input 
-                        type="text" 
-                        placeholder="Search servers..." 
+                      <input
+                        type="text"
+                        placeholder="Search servers..."
                         value={serverSearchQuery}
                         onChange={(e) => setServerSearchQuery(e.target.value)}
                         className="server-search-input"
@@ -673,7 +665,7 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Alert banner */}
+                  {}
                   {user && !user.guildsVerified && (
                     <div className="servers-alert-banner">
                       <AlertTriangle size={14} className="alert-icon" />
@@ -681,19 +673,19 @@ function App() {
                     </div>
                   )}
 
-                  {/* Server Grid */}
+                  {}
                   <div className="guilds-card-grid">
                     {filteredGuilds.length > 0 ? (
                       filteredGuilds.map((guild, idx) => {
                         const guildIconUrl = guild.icon
                           ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=64`
                           : null;
-                        
+
                         const isJoined = guild.joined;
-                        const showStatus = user.guildsVerified 
+                        const showStatus = user.guildsVerified
                           ? (isJoined ? 'Hikari is active' : 'Not in server')
                           : 'Join status unavailable';
-                        
+
                         const showBadge = user.guildsVerified
                           ? (isJoined ? 'JOINED' : 'INVITE REQUIRED')
                           : 'UNKNOWN';
@@ -718,24 +710,24 @@ function App() {
                                 • {showBadge}
                               </span>
                             </div>
-                            
-                            {/* Manage access detected indicator */}
+
+                            {}
                             <div className="guild-card-access-indicator">
                               <Shield size={11} className="shield-icon" />
                               <span>Manage access detected</span>
                             </div>
-                            
+
                             <div className="guild-card-bottom-actions">
                               {isJoined ? (
-                                <button 
+                                <button
                                   className="btn-guild-open"
                                   onClick={() => showToast(`Opening dashboard for ${guild.name}...`, 'info')}
                                 >
                                   Open dashboard <ArrowRight size={11} />
                                 </button>
                               ) : (
-                                <button 
-                                  className="btn-guild-invite" 
+                                <button
+                                  className="btn-guild-invite"
                                   onClick={() => window.open(`https://discord.com/oauth2/authorize?client_id=1507772633708761148&permissions=8&scope=bot+applications.commands&guild_id=${guild.id}`, '_blank')}
                                 >
                                   Invite Hikari <ExternalLink size={11} />
@@ -755,10 +747,10 @@ function App() {
               </div>
             )}
 
-            {/* 💖 LIKED SONGS TAB */}
+            {}
             {currentTab === 'liked' && (
               <div className="tab-fade-in liked-tab-view">
-                {/* Header Section */}
+                {}
                 <div className="liked-header-section">
                   <div className="liked-badge-capsule">
                     <Heart size={12} className="purple-heart-icon" />
@@ -834,9 +826,9 @@ function App() {
 
                     <div className="library-search-wrapper">
                       <Search size={13} className="library-search-icon" />
-                      <input 
-                        type="text" 
-                        placeholder="Search library..." 
+                      <input
+                        type="text"
+                        placeholder="Search library..."
                         value={likedSearchQuery}
                         onChange={(e) => setLikedSearchQuery(e.target.value)}
                         className="library-search-input"
@@ -858,10 +850,10 @@ function App() {
                         <span className="col-duration">DURATION</span>
                         <span className="col-actions"></span>
                       </div>
-                      
+
                       <div className="songs-table-rows">
                         {filteredLikedSongs.map((song, idx) => {
-                          const formattedAddedAt = song.addedAt 
+                          const formattedAddedAt = song.addedAt
                             ? new Date(song.addedAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
                             : 'Unknown';
 
@@ -889,8 +881,8 @@ function App() {
                                 <span>{song.duration || '--:--'}</span>
                               </div>
                               <div className="col-actions song-actions-cell">
-                                <button 
-                                  className="btn-song-delete" 
+                                <button
+                                  className="btn-song-delete"
                                   onClick={() => handleDeleteLikedSong(song.originalIndex)}
                                   title="Remove from Liked"
                                 >
@@ -911,8 +903,8 @@ function App() {
                         {likedSearchQuery ? 'No matching songs found' : 'No liked songs yet'}
                       </h3>
                       <p className="empty-state-desc">
-                        {likedSearchQuery 
-                          ? 'Try adjusting your search terms to find what you saved.' 
+                        {likedSearchQuery
+                          ? 'Try adjusting your search terms to find what you saved.'
                           : "Use Hikari's like command while music is playing and your personal library will show up here instantly."
                         }
                       </p>
@@ -984,9 +976,9 @@ function App() {
                     <span style={{ marginRight: '6px' }}>+</span> Create a playlist
                   </span>
                   <form onSubmit={handleCreatePlaylist} style={{ width: '100%' }}>
-                    <input 
-                      type="text" 
-                      placeholder="Late night drive" 
+                    <input
+                      type="text"
+                      placeholder="Late night drive"
                       value={newPlaylistName}
                       onChange={(e) => setNewPlaylistName(e.target.value)}
                       className="create-playlist-input"
@@ -1003,10 +995,10 @@ function App() {
                     <ListMusic size={18} className="purple-heart-icon" />
                     <span>Playlist collection</span>
                   </h2>
-                  
+
                   <div className="playlists-collection-list">
                     {/* Built-in Liked Music Card */}
-                    <div 
+                    <div
                       className={`playlist-collection-card ${selectedPlaylist.isBuiltIn ? 'active' : ''}`}
                       onClick={() => setSelectedPlaylist({ id: 'liked', name: 'Liked Music', tracks: likedSongs, isBuiltIn: true })}
                     >
@@ -1024,7 +1016,7 @@ function App() {
 
                     {/* Custom Playlists */}
                     {playlists.map((p, idx) => (
-                      <div 
+                      <div
                         key={idx}
                         className={`playlist-collection-card ${!selectedPlaylist.isBuiltIn && selectedPlaylist._id === p._id ? 'active' : ''}`}
                         onClick={() => setSelectedPlaylist({ ...p, isBuiltIn: false })}
@@ -1040,7 +1032,7 @@ function App() {
                             </span>
                           </div>
                         </div>
-                        <button 
+                        <button
                           className="btn-song-delete"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -1061,10 +1053,10 @@ function App() {
                     <Heart size={11} className="purple-heart-icon" />
                     <span>{selectedPlaylist.isBuiltIn ? 'BUILT-IN PLAYLIST' : 'CUSTOM PLAYLIST'}</span>
                   </div>
-                  
+
                   <h2 className="liked-page-title" style={{ marginTop: 0, fontSize: '28px' }}>{selectedPlaylist.name}</h2>
                   <p className="liked-page-desc" style={{ marginTop: '4px', marginBottom: '20px' }}>
-                    {selectedPlaylist.isBuiltIn 
+                    {selectedPlaylist.isBuiltIn
                       ? `${likedSongs.length} songs saved - syncs with Liked Songs`
                       : `${selectedPlaylist.tracks?.length || 0} songs saved - updated ${selectedPlaylist.updatedAt ? new Date(selectedPlaylist.updatedAt).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently'}`
                     }
@@ -1091,10 +1083,10 @@ function App() {
                   {/* QUEUE INTO SERVER Card */}
                   <div className="metric-card-box" style={{ background: '#090710', border: '1px solid var(--border-card)', borderRadius: '14px', padding: '20px', marginBottom: '24px' }}>
                     <span className="metric-card-label" style={{ fontSize: '8px' }}>QUEUE INTO SERVER</span>
-                    
+
                     <div style={{ position: 'relative', marginTop: '12px', width: '100%' }}>
-                      <select 
-                        className="queue-server-select" 
+                      <select
+                        className="queue-server-select"
                         value={selectedServerId}
                         onChange={(e) => setSelectedServerId(e.target.value)}
                       >
@@ -1206,7 +1198,7 @@ function App() {
                       {activityPlayers.reduce((acc, p) => acc + (p.listenerCount || 0), 0)}
                     </h3>
                   </div>
-                  
+
                   <div className="activity-metric-card">
                     <div className="activity-metric-icon blue">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1235,12 +1227,12 @@ function App() {
                       return (
                         <div key={idx} className="activity-player-card">
                           {player.currentTrack?.thumbnail && (
-                            <div 
-                              className="activity-player-bg-blur" 
+                            <div
+                              className="activity-player-bg-blur"
                               style={{ backgroundImage: `url(${player.currentTrack.thumbnail})` }}
                             />
                           )}
-                          
+
                           <div className="activity-player-header">
                             <div className="activity-server-info">
                               {guildIconUrl ? (
@@ -1252,13 +1244,13 @@ function App() {
                               )}
                               <span className="activity-server-name">{player.guildName}</span>
                             </div>
-                            
+
                             <div className={`activity-status-pill ${player.isPaused ? 'paused' : 'playing'}`}>
                               <span className="activity-status-dot"></span>
                               <span>{player.isPaused ? 'PAUSED' : 'LIVE'}</span>
                             </div>
                           </div>
-                          
+
                           <div className="activity-player-body">
                             <div className="activity-song-details">
                               {player.currentTrack?.thumbnail ? (
@@ -1270,7 +1262,7 @@ function App() {
                                   <Music size={20} />
                                 </div>
                               )}
-                              
+
                               <div className="activity-track-meta">
                                 <h4 className="activity-track-title" title={player.currentTrack?.title || 'No track playing'}>
                                   {player.currentTrack ? (
@@ -1291,7 +1283,7 @@ function App() {
                                 )}
                               </div>
                             </div>
-                            
+
                             <div className="activity-player-right-stats">
                               <div className="activity-stat-box">
                                 <Users size={12} className="stat-box-icon purple" />
@@ -1355,7 +1347,7 @@ function App() {
 
               {/* Subtitle description */}
               <p className="hero-description">
-                Hikari gives your server a live overview, fast queue controls, and a music search flow 
+                Hikari gives your server a live overview, fast queue controls, and a music search flow
                 that feels more like a player than an admin panel.
               </p>
 
@@ -1374,7 +1366,7 @@ function App() {
             {/* 🛠️ 3-Column Features Section */}
             <section className="features-section">
               <div className="features-grid">
-                
+
                 {/* Feature 1 */}
                 <div className="feature-card">
                   <div className="feature-icon-circle">
@@ -1428,9 +1420,9 @@ function App() {
                 {/* Search Input Bar Mockup */}
                 <div className="search-bar-wrapper">
                   <Search className="search-bar-icon" size={14} />
-                  <input 
-                    type="text" 
-                    placeholder="Search songs, playlists, or paste a link..." 
+                  <input
+                    type="text"
+                    placeholder="Search songs, playlists, or paste a link..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="search-input"
@@ -1459,10 +1451,10 @@ function App() {
                     </div>
                     <span className="volume-percentage">{volume}%</span>
                   </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
                     value={volume}
                     onChange={(e) => setVolume(e.target.value)}
                     className="volume-slider"
@@ -1475,7 +1467,7 @@ function App() {
             <section className="pfp-card-section">
               <div className="pfp-display-card">
                 <img src="/Hikari-pfp.jpg" alt="Hikari Avatar" className="pfp-image" />
-                
+
                 {/* Glassmorphic banner overlay */}
                 <div className="glass-overlay-card">
                   <span className="overlay-category">HIKARI DASHBOARD</span>
@@ -1493,28 +1485,28 @@ function App() {
       {/* 📱 PERSISTENT MOBILE BOTTOM TAB NAVIGATION */}
       {session.loggedIn && user && (
         <nav className="mobile-bottom-tabs">
-          <button 
+          <button
             className={`tab-item ${currentTab === 'servers' ? 'active' : ''}`}
             onClick={() => setCurrentTab('servers')}
           >
             <Home size={18} />
             <span>Servers</span>
           </button>
-          <button 
+          <button
             className={`tab-item ${currentTab === 'liked' ? 'active' : ''}`}
             onClick={() => setCurrentTab('liked')}
           >
             <Heart size={18} />
             <span>Liked Songs</span>
           </button>
-          <button 
+          <button
             className={`tab-item ${currentTab === 'playlists' ? 'active' : ''}`}
             onClick={() => setCurrentTab('playlists')}
           >
             <ListMusic size={18} />
             <span>Playlists</span>
           </button>
-          <button 
+          <button
             className={`tab-item ${currentTab === 'activity' ? 'active' : ''}`}
             onClick={() => setCurrentTab('activity')}
           >
@@ -1564,8 +1556,8 @@ function App() {
               <button className="btn-confirm-cancel" onClick={closeConfirm}>
                 Cancel
               </button>
-              <button 
-                className="btn-confirm-accept" 
+              <button
+                className="btn-confirm-accept"
                 onClick={() => {
                   if (confirmModal.onConfirm) confirmModal.onConfirm();
                   closeConfirm();

@@ -1,13 +1,13 @@
-import { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  ModalBuilder, 
-  TextInputBuilder, 
-  TextInputStyle, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ComponentType,
   Routes
@@ -283,8 +283,8 @@ export default {
                     flags: MessageFlags.IsComponentsV2
                   });
                 }
-              } 
-              
+              }
+
               else if (btnInteraction.customId === 'cancel_branding') {
                 const cancelCard = PrefixLayout.messageCard('❌', '**Branding changes cancelled.**');
                 await btnInteraction.update({
@@ -300,8 +300,8 @@ export default {
           } catch (error) {
             console.error('Modal submit error or timeout:', error);
           }
-        } 
-        
+        }
+
         else if (interaction.customId === 'reset_branding') {
           try {
             const guild = message.guild;

@@ -8,10 +8,6 @@ export default {
   category: 'Playlist',
   usage: '<playlist name>',
 
-  /**
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const playlistName = args.join(' ').trim();
@@ -52,9 +48,6 @@ export default {
     }
   },
 
-  /**
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const playlistName = interaction.options.getString('name', true).trim();

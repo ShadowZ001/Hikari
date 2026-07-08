@@ -11,7 +11,7 @@ export default {
     {
       name: 'duration',
       description: 'Duration (e.g. 30m, 1h, 45m) or "cancel" to cancel timer.',
-      type: 3, // STRING
+      type: 3,
       required: true
     }
   ],

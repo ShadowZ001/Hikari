@@ -22,7 +22,6 @@ export default {
 
       await interaction.deferReply();
 
-      // Clear the queue tracks array
       player.playlist.tracks = [];
       player.currentIndex = 0;
 
@@ -55,7 +54,6 @@ export default {
       const connected = await checkVoiceChannel(message);
       if (!connected) return;
 
-      // Clear the queue tracks array
       player.playlist.tracks = [];
       player.currentIndex = 0;
 

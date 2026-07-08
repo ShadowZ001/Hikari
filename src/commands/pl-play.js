@@ -10,10 +10,6 @@ export default {
   category: 'Playlist',
   usage: '<playlist name>',
 
-  /**
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const playlistName = args.join(' ').trim();
@@ -31,7 +27,6 @@ export default {
         ));
       }
 
-      // Check Voice Channel
       const connected = await checkVoiceChannel(message);
       if (!connected) return;
 
@@ -53,14 +48,12 @@ export default {
           ));
         }
 
-        // Reuse existing player
         player.playlist = playlist;
         player.currentIndex = 0;
         player.currentTrack = playlist.tracks[0];
         player.requester = message.author;
         player.textChannelId = message.channel.id;
 
-        // Reset player filters on connection reuse
         player.currentFilter = "None";
         player.speed = 1.0;
         player.pitch = 1.0;
@@ -77,7 +70,6 @@ export default {
           player.timeoutId = null;
         }
 
-        // Start track playback
         await playTrack(message.client, message.guildId, message.channel);
         console.log(`[Hikari Player] Playback updated for playlist "${playlistName}" in prefix command`);
       } else {
@@ -104,7 +96,6 @@ export default {
         }
         message.client.activePlayers.set(message.guildId, playerObj);
 
-        // Start track playback
         await playTrack(message.client, message.guildId, message.channel);
         console.log(`[Hikari Player] Playback started for playlist "${playlistName}" in prefix command`);
       }
@@ -113,15 +104,11 @@ export default {
     }
   },
 
-  /**
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const playlistName = interaction.options.getString('name', true).trim();
       const warnEmoji = EMOJIS.warnnn || '<:warnnn:1498633209246646393>';
 
-      // Check Voice Channel
       const connected = await checkVoiceChannel(interaction);
       if (!connected) return;
 
@@ -143,14 +130,12 @@ export default {
           ));
         }
 
-        // Reuse existing player
         player.playlist = playlist;
         player.currentIndex = 0;
         player.currentTrack = playlist.tracks[0];
         player.requester = interaction.user;
         player.textChannelId = interaction.channel.id;
 
-        // Reset player filters on connection reuse
         player.currentFilter = "None";
         player.speed = 1.0;
         player.pitch = 1.0;

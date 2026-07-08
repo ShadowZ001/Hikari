@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
 
-/**
- * Connects to the MongoDB Database using the MONGO_URI environment variable.
- */
 export async function connectDatabase() {
   const mongoUri = process.env.MONGO_URI;
 
@@ -12,9 +9,9 @@ export async function connectDatabase() {
   }
 
   try {
-    // Enable strictQuery to prevent warnings in Mongoose v7/v8
+
     mongoose.set('strictQuery', true);
-    
+
     console.log('\x1b[36mℹ [Database] Connecting to MongoDB Database...\x1b[0m');
     await mongoose.connect(mongoUri);
     console.log('\x1b[32m✔ [Database] Connection established successfully.\x1b[0m');

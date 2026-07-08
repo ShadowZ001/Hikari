@@ -1,26 +1,17 @@
 import { PlayerLayout } from '../components/PlayerLayout.js';
 
-/**
- * Plays the current track in the active player queue for a guild.
- * @param {import('discord.js').Client} client 
- * @param {string} guildId 
- * @param {import('discord.js').TextChannel} channel 
- */
 export async function playTrack(client, guildId, channel) {
   const player = client.activePlayers?.get(guildId);
   if (!player) return;
 
-  // Clear existing timeout if any was set as fallback
   if (player.timeoutId) {
     clearTimeout(player.timeoutId);
     player.timeoutId = null;
   }
 
-  // Get track
   const track = player.playlist.tracks[player.currentIndex];
   player.currentTrack = track;
 
-  // Add to history
   if (!player.history) {
     player.history = [];
   }
@@ -31,7 +22,6 @@ export async function playTrack(client, guildId, channel) {
     }
   }
 
-  // Track currently playing in memory cache for pl-add
   if (!client.currentTracks) {
     client.currentTracks = new Map();
   }
@@ -41,25 +31,23 @@ export async function playTrack(client, guildId, channel) {
 
   try {
     if (!player.message) {
-      // Send new message
+
       const msg = await channel.send(payload);
       player.message = msg;
     } else {
-      // Edit existing message
+
       await player.message.edit(payload);
     }
   } catch (error) {
     console.error(`[Hikari Player] Error rendering playing message for guild ${guildId}:`, error);
   }
 
-  // Find all connected nodes and determine the healthiest node
-  const connectedNodes = Array.from(client.shoukaku.nodes.values()).filter(n => n.state === 1); // 1 = CONNECTED
+  const connectedNodes = Array.from(client.shoukaku.nodes.values()).filter(n => n.state === 1);
   if (connectedNodes.length === 0) {
     console.error("[Hikari Player] No connected Lavalink nodes found.");
     return channel.send({ content: `❌ No available Lavalink nodes are connected right now.` }).catch(console.error);
   }
 
-  // Sort connected nodes by score (lowest score is best)
   connectedNodes.sort((a, b) => {
     const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
     const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
@@ -73,7 +61,6 @@ export async function playTrack(client, guildId, channel) {
     const pingA = a.ping !== Infinity && !isNaN(a.ping) ? a.ping : 300;
     const pingB = b.ping !== Infinity && !isNaN(b.ping) ? b.ping : 300;
 
-    // score = CPU load (0-100) + active players + (ping / 10)
     const scoreA = (cpuA * 100) + playersA + (pingA / 10);
     const scoreB = (cpuB * 100) + playersB + (pingB / 10);
 
@@ -83,7 +70,6 @@ export async function playTrack(client, guildId, channel) {
   const bestNode = connectedNodes[0];
   console.log(`[Hikari Player] Healthy node selected: "${bestNode.name}" (ping: ${bestNode.ping}ms)`);
 
-  // 1. Get or join voice channel using Shoukaku
   let shoukakuPlayer = player.shoukakuPlayer;
   if (!shoukakuPlayer) {
     try {
@@ -93,11 +79,10 @@ export async function playTrack(client, guildId, channel) {
         channelId: player.voiceChannelId,
         shardId: guild?.shardId || 0,
         deaf: true,
-        nodeName: bestNode.name // Create player on the healthiest node!
+        nodeName: bestNode.name
       });
       player.shoukakuPlayer = shoukakuPlayer;
 
-      // Bind Shoukaku event handlers
       shoukakuPlayer.on('end', (data) => {
         if (data.reason === 'replaced') return;
         handleTrackEnd(client, guildId, channel);
@@ -121,7 +106,7 @@ export async function playTrack(client, guildId, channel) {
       return channel.send({ content: `❌ Failed to join your voice channel.` }).catch(console.error);
     }
   } else {
-    // Dynamic load balancing migration: if player is already active, move it to the healthiest node if performance degrades
+
     if (shoukakuPlayer.node.name !== bestNode.name) {
       console.log(`[Hikari Player] Moving player from "${shoukakuPlayer.node.name}" to healthier node "${bestNode.name}"`);
       await shoukakuPlayer.move(bestNode.name).catch(err => {
@@ -130,12 +115,10 @@ export async function playTrack(client, guildId, channel) {
     }
   }
 
-  // Set initial player volume if volume differs from default (100)
   if (player.volume !== 100) {
     await shoukakuPlayer.setGlobalVolume(player.volume).catch(err => console.error(err));
   }
 
-  // 2. Resolve Track from Lavalink Node and Play
   try {
     let resolveQuery = track.uri;
     if (!resolveQuery || resolveQuery.includes('mock') || !resolveQuery.startsWith('http')) {
@@ -146,7 +129,6 @@ export async function playTrack(client, guildId, channel) {
     let encodedTrack = null;
     let selectedNodeName = null;
 
-    // Try resolving on the connected nodes in order of health/score to handle node rate-limits
     for (const node of connectedNodes) {
       try {
         console.log(`[Hikari Player] Attempting track resolution on node "${node.name}"`);
@@ -162,14 +144,13 @@ export async function playTrack(client, guildId, channel) {
         }
         if (encodedTrack) {
           selectedNodeName = node.name;
-          break; // Successfully resolved!
+          break;
         }
       } catch (err) {
         console.warn(`[Hikari Player] Resolution failed on node "${node.name}":`, err.message);
       }
     }
 
-    // Fallback: If we couldn't resolve, try search by title and artist on all nodes
     if (!encodedTrack) {
       const artistQuery = (track.artist && track.artist !== 'Unknown Artist' && track.artist !== 'Faheem Abdullah, Rauhan Malik, Amir Ameer') ? ` ${track.artist}` : '';
       const fallbackQuery = `ytmsearch:${track.title}${artistQuery}`;
@@ -212,31 +193,24 @@ export async function playTrack(client, guildId, channel) {
   }
 }
 
-/**
- * Handles playback end event.
- * @param {import('discord.js').Client} client 
- * @param {string} guildId 
- * @param {import('discord.js').TextChannel} channel 
- */
 async function handleTrackEnd(client, guildId, channel) {
   const player = client.activePlayers?.get(guildId);
   if (!player) return;
 
-  // Loop Mode handling
   if (player.loopMode === 'track') {
-    // Replay current track
+
     playTrack(client, guildId, channel);
   } else if (player.loopMode === 'queue') {
-    // Go to next track, wrapping around to the first track if we reached the end
+
     player.currentIndex = (player.currentIndex + 1) % player.playlist.tracks.length;
     playTrack(client, guildId, channel);
   } else {
-    // Check next track
+
     if (player.currentIndex + 1 < player.playlist.tracks.length) {
       player.currentIndex += 1;
       playTrack(client, guildId, channel);
     } else if (player.autoplay && player.currentTrack) {
-      // Autoplay handler
+
       try {
         const lastTrack = player.currentTrack;
         const query = `${lastTrack.title} ${lastTrack.artist || ''}`;
@@ -270,7 +244,6 @@ async function endQueue(client, guildId, player) {
     console.error('[Hikari Player] Error updating ended queue:', err);
   }
 
-  // Leave Voice Channel and clean up Shoukaku
   try {
     client.shoukaku.leaveVoiceChannel(guildId);
   } catch (err) {
@@ -280,12 +253,6 @@ async function endQueue(client, guildId, player) {
   client.activePlayers.delete(guildId);
 }
 
-/**
- * Skips the active track for a guild.
- * @param {import('discord.js').Client} client 
- * @param {string} guildId 
- * @param {import('discord.js').TextChannel} channel 
- */
 export async function skipTrack(client, guildId, channel) {
   const player = client.activePlayers?.get(guildId);
   if (!player) return;
@@ -299,7 +266,7 @@ export async function skipTrack(client, guildId, channel) {
     player.currentIndex += 1;
     await playTrack(client, guildId, channel);
   } else {
-    // End Queue
+
     try {
       const payload = PlayerLayout.queueEndedCard(player.currentTrack, player.requester);
       await player.message.edit(payload);
@@ -317,11 +284,6 @@ export async function skipTrack(client, guildId, channel) {
   }
 }
 
-/**
- * Stops playback and clears the active player for a guild.
- * @param {import('discord.js').Client} client 
- * @param {string} guildId 
- */
 export async function stopTrack(client, guildId) {
   const player = client.activePlayers?.get(guildId);
   if (!player) return;

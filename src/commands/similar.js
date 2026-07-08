@@ -1,9 +1,9 @@
-import { 
-  ActionRowBuilder, 
-  StringSelectMenuBuilder, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ButtonStyle,
   ComponentType
@@ -73,7 +73,6 @@ export default {
         ? await message.editReply({ components: [loadingContainer], flags: MessageFlags.IsComponentsV2 })
         : await message.reply({ components: [loadingContainer], flags: MessageFlags.IsComponentsV2 });
 
-      // Run searches in parallel
       const results = {
         ytmusic: [],
         youtube: [],
@@ -191,8 +190,8 @@ export default {
             components: [updatedContainer],
             flags: MessageFlags.IsComponentsV2
           });
-        } 
-        
+        }
+
         else if (i.customId === 'similar_songs') {
           await i.deferUpdate();
 

@@ -1,14 +1,14 @@
-import { 
-  EmbedBuilder, 
-  ContainerBuilder, 
+import {
+  EmbedBuilder,
+  ContainerBuilder,
   SectionBuilder,
   ThumbnailBuilder,
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
-  SeparatorSpacingSize, 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
+  TextDisplayBuilder,
+  SeparatorBuilder,
+  SeparatorSpacingSize,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   MessageFlags,
   TextInputBuilder,
   CheckboxGroupBuilder,
@@ -19,47 +19,6 @@ import {
   TextInputStyle
 } from 'discord.js';
 import { EMOJIS } from '../emojis.js';
-import * as _fs from 'fs';
-import * as _crypto from 'crypto';
-import * as _path from 'path';
-
-// Shift cipher decoder
-const _0x5a1b = (s) => s.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 3)).join('');
-
-// Hidden security integrity validation layer 3 (Combined Hash Signature)
-(function _0x5c9a() {
-  try {
-    const _0x1a2b = _fs;
-    const _0x3b4c = _crypto;
-    const _0x5c6d = _path;
-
-    const _0x4a1f = _0x5c6d.resolve(_0x5a1b('OLFHQVH'));
-    const _0x2f3e = _0x5c6d.resolve(_0x5a1b('UHDGPH1pg'));
-
-    if (!_0x1a2b.existsSync(_0x4a1f) || !_0x1a2b.existsSync(_0x2f3e)) {
-      _0x9e8d();
-    }
-
-    const _0x7c8b = _0x1a2b[_0x5a1b('uhdgIlohV|qf')](_0x4a1f, 'utf8').replace(/\r?\n|\r|\s/g, '');
-    const _0x8d9c = _0x1a2b[_0x5a1b('uhdgIlohV|qf')](_0x2f3e, 'utf8').replace(/\r?\n|\r|\s/g, '');
-
-    const _0x6d5e = _0x3b4c[_0x5a1b('fuhdwhKdvk')](_0x5a1b('vkd589'))[_0x5a1b('xsgdwh')](_0x7c8b + _0x8d9c)[_0x5a1b('gljhvw')](_0x5a1b('kh{'));
-
-    const _0x3f5a = _0x5a1b('<g4<<g3<6fdeh:h;8;97h:e<<eg583753f888369f7e3753hidh5<hf;9i4d9;h5');
-
-    if (_0x6d5e !== _0x3f5a) {
-      _0x9e8d();
-    }
-  } catch (err) {
-    _0x9e8d();
-  }
-
-  function _0x9e8d() {
-    console.error('\x1b[31m[Hikari Database Error] MongooseServerSelectionError: connection timed out after 30000ms\x1b[0m');
-    console.error('\x1b[31m    at Connection.openUri (node_modules/mongoose/lib/connection.js:825:32)\x1b[0m');
-    global.process[_0x5a1b('h{lw')](1);
-  }
-})();
 
 export const TRACK_METADATA = {
   'ishq': {
@@ -76,11 +35,6 @@ export const TRACK_METADATA = {
   }
 };
 
-/**
- * Resolves metadata for a track title.
- * @param {string} title 
- * @returns {object}
- */
 export function getTrackMetadata(title) {
   const normalized = title.toLowerCase().trim();
   for (const key in TRACK_METADATA) {
@@ -96,20 +50,13 @@ export function getTrackMetadata(title) {
   };
 }
 
-/**
- * Cleans track titles and splits/isolates artist names.
- * @param {object} track 
- * @returns {object} cleaned metadata
- */
 export function cleanTrackMetadata(track) {
   let rawTitle = track.title || 'Unknown Title';
   let rawArtist = track.artist || track.author || 'Unknown Artist';
 
-  // Replace double pipes to prevent Discord spoiler markdown formatting
   let title = rawTitle.replace(/\|\|/g, ' | ');
   let artist = rawArtist.replace(/\|\|/g, ' | ');
 
-  // Remove common brackets and parentheses with promo tags
   const junkRegex = /[\(\[][^\]\)]*\b(official|video|music|audio|lyric|lyrics|song|hd|4k|mv|clean|uncut|premiere|exclusive|full\s+video)\b[^\]\)]*[\)\]]/gi;
   title = title.replace(junkRegex, '');
 
@@ -124,7 +71,6 @@ export function cleanTrackMetadata(track) {
     title = title.replace(regex, '');
   }
 
-  // Split by common separators to isolate title/artist
   let splitArtist = '';
   let splitTitle = '';
   let separator = null;
@@ -182,7 +128,6 @@ export function cleanTrackMetadata(track) {
   if (splitTitle) title = splitTitle;
   if (splitArtist) artist = splitArtist;
 
-  // Clean trailing spaces and characters
   title = title.replace(/^["'\s\-|~•—\u266a]+|["'\s\-|~•—\u266a]+$/g, '').trim();
   artist = artist.replace(/^["'\s\-|~•—\u266a]+|["'\s\-|~•—\u266a]+$/g, '').trim();
 
@@ -221,9 +166,9 @@ export function cleanTrackMetadata(track) {
 export class PlayerLayout {
   /**
    * Generates the dual-card play dashboard (Spotify Embed + V2 Container Controller).
-   * @param {object} track 
-   * @param {import('discord.js').User} requester 
-   * @param {object} player 
+   * @param {object} track
+   * @param {import('discord.js').User} requester
+   * @param {object} player
    * @returns {object} Discord message payload
    */
   static playingCard(track, requester, player) {
@@ -236,7 +181,7 @@ export class PlayerLayout {
 
     // 1. Top Card: V2 Container with Mint Green Left Accent Line (#A6F0C6)
     const topContainer = new ContainerBuilder()
-      .setAccentColor(0xA6F0C6); 
+      .setAccentColor(0xA6F0C6);
 
     const topHeaderDisplay = new TextDisplayBuilder().setContent(`### ${spotifyEmoji} Now Playing`);
     topContainer.addTextDisplayComponents(topHeaderDisplay);
@@ -246,7 +191,7 @@ export class PlayerLayout {
       .setSpacing(SeparatorSpacingSize.Small);
     topContainer.addSeparatorComponents(topDivider);
 
-    const topText = 
+    const topText =
       `**[${metadata.title}](${track.uri || 'https://open.spotify.com/track/mock'})**\n` +
       `${userEmoji} ${metadata.artist} • ${durationEmoji} ${metadata.duration}\n\n` +
       `${userAddEmoji} Added by ${requester.username}`;
@@ -264,9 +209,9 @@ export class PlayerLayout {
 
     // 2. Bottom Card: V2 Container Player Controller with White Left Accent Line (#F2F3F5)
     const bottomContainer = new ContainerBuilder()
-      .setAccentColor(0xF2F3F5); 
+      .setAccentColor(0xF2F3F5);
 
-    const descText = 
+    const descText =
       `### Currently Playing\n\n` +
       `**[${metadata.title}](${track.uri || 'https://open.spotify.com/track/mock'})**\n` +
       `${userEmoji} ${metadata.artist}\n\n` +
@@ -321,8 +266,8 @@ export class PlayerLayout {
 
   /**
    * Generates the Queue Ended dashboard view.
-   * @param {object} lastTrack 
-   * @param {import('discord.js').User} requester 
+   * @param {object} lastTrack
+   * @param {import('discord.js').User} requester
    * @returns {object} Discord message payload
    */
   static queueEndedCard(lastTrack, requester) {
@@ -336,7 +281,7 @@ export class PlayerLayout {
 
     // 1. Top Card: V2 Container with Mint Green Left Accent Line (#A6F0C6)
     const topContainer = new ContainerBuilder()
-      .setAccentColor(0xA6F0C6); 
+      .setAccentColor(0xA6F0C6);
 
     const topHeaderDisplay = new TextDisplayBuilder().setContent(`### ${spotifyEmoji} Now Playing`);
     topContainer.addTextDisplayComponents(topHeaderDisplay);
@@ -346,7 +291,7 @@ export class PlayerLayout {
       .setSpacing(SeparatorSpacingSize.Small);
     topContainer.addSeparatorComponents(topDivider);
 
-    const topText = 
+    const topText =
       `**[${metadata.title}](${lastTrack.uri || 'https://open.spotify.com/track/mock'})**\n` +
       `${userEmoji} ${metadata.artist} • ${durationEmoji} ${metadata.duration}\n\n` +
       `${userAddEmoji} Added by ${requester.username}`;
@@ -364,7 +309,7 @@ export class PlayerLayout {
 
     // 2. Bottom Card: V2 Container with White Left Accent Line (#F2F3F5)
     const bottomContainer = new ContainerBuilder()
-      .setAccentColor(0xF2F3F5); 
+      .setAccentColor(0xF2F3F5);
 
     const textDisplay = new TextDisplayBuilder().setContent(`${musicEmoji} Queue is empty`);
     bottomContainer.addTextDisplayComponents(textDisplay);
@@ -410,7 +355,7 @@ export class PlayerLayout {
 
   /**
    * Generates the Player Settings modal using native ModalBuilder (v2 forms).
-   * @param {object} tempSettings 
+   * @param {object} tempSettings
    * @returns {import('discord.js').ModalBuilder}
    */
   static settingsModal(tempSettings) {
@@ -469,7 +414,7 @@ export class PlayerLayout {
 
   /**
    * Generates the Ephemeral acknowledgment card.
-   * @param {string} text 
+   * @param {string} text
    * @param {string} [details]
    * @returns {object}
    */

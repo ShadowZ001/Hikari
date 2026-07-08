@@ -26,7 +26,6 @@ export default {
         return interaction.reply({ ...card, ephemeral: false });
       }
 
-      // Move player by calling joinVoiceChannel on Shoukaku again
       await client.shoukaku.joinVoiceChannel({
         guildId: interaction.guildId,
         channelId: voiceChannel.id,
@@ -65,7 +64,6 @@ export default {
         return message.reply(card);
       }
 
-      // Move player
       await client.shoukaku.joinVoiceChannel({
         guildId: message.guildId,
         channelId: voiceChannel.id,

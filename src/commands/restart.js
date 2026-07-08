@@ -1,10 +1,10 @@
-import { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ComponentType
 } from 'discord.js';
@@ -127,8 +127,8 @@ export default {
           }, 1000);
 
           collector.stop();
-        } 
-        
+        }
+
         else if (i.customId === 'cancel_restart') {
           await i.deferUpdate();
 

@@ -28,7 +28,6 @@ export default {
       player.isPaused = true;
       await player.shoukakuPlayer.setPaused(true);
 
-      // Edit active player message if available
       if (player.message && player.currentTrack) {
         const payload = PlayerLayout.playingCard(player.currentTrack, player.requester, player);
         await player.message.edit(payload).catch(() => {});

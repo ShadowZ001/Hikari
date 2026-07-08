@@ -8,10 +8,6 @@ export default {
   category: 'Playlist',
   usage: '<playlist name> | <song name or index>',
 
-  /**
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const content = args.join(' ').trim();
@@ -37,14 +33,14 @@ export default {
         playlistName = parts[0].trim();
         trackQuery = parts[1]?.trim();
       } else {
-        // Try to match against existing playlist names for this user
+
         const playlists = await Playlist.find({ userId: message.author.id });
         const match = playlists.find(pl => content.toLowerCase().startsWith(pl.name.toLowerCase()));
         if (match) {
           playlistName = match.name;
           trackQuery = content.slice(match.name.length).trim();
         } else {
-          // Fallback: first word is playlist, rest is track
+
           const words = content.split(/ +/);
           playlistName = words[0];
           trackQuery = words.slice(1).join(' ');
@@ -69,15 +65,14 @@ export default {
       }
 
       let removedTrackTitle = '';
-      
-      // Try to parse track index
+
       const index = parseInt(trackQuery, 10);
       if (!isNaN(index) && index > 0 && index <= playlist.tracks.length) {
         const removed = playlist.tracks[index - 1];
         removedTrackTitle = removed.title;
         playlist.tracks = playlist.tracks.filter((_, idx) => idx !== index - 1);
       } else {
-        // Try to search by track title (case-insensitive)
+
         const matchIndex = playlist.tracks.findIndex(
           t => t.title.toLowerCase().includes(trackQuery.toLowerCase())
         );
@@ -105,9 +100,6 @@ export default {
     }
   },
 
-  /**
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const playlistName = interaction.options.getString('playlist', true).trim();
@@ -120,7 +112,7 @@ export default {
       }
 
       let removedTrackTitle = '';
-      
+
       const index = parseInt(trackQuery, 10);
       if (!isNaN(index) && index > 0 && index <= playlist.tracks.length) {
         const removed = playlist.tracks[index - 1];

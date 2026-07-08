@@ -20,7 +20,7 @@ export default {
   async autocomplete(interaction) {
     try {
       const supportedManagers = await getLavalinkSupportedSources(interaction.client);
-      
+
       let filtered = ALL_SOURCES;
       if (supportedManagers.length > 0) {
         filtered = ALL_SOURCES.filter(src => supportedManagers.includes(src.manager));
@@ -44,7 +44,6 @@ export default {
       const checkEmoji = EMOJIS.checkk || '✅';
       const warnEmoji = EMOJIS.warnnn || '⚠️';
 
-      // Validate that the selected source is supported dynamically
       const supportedManagers = await getLavalinkSupportedSources(interaction.client);
       let allowedSources = ALL_SOURCES;
       if (supportedManagers.length > 0) {
@@ -82,7 +81,7 @@ export default {
     try {
       const checkEmoji = EMOJIS.checkk || '✅';
       const warnEmoji = EMOJIS.warnnn || '⚠️';
-      
+
       const supportedManagers = await getLavalinkSupportedSources(message.client);
       let allowedSources = ALL_SOURCES;
       if (supportedManagers.length > 0) {
@@ -113,7 +112,6 @@ export default {
         return message.reply(card);
       }
 
-      // Render options menu
       const menuCard = PrefixLayout.messageCard('⚙️', '**Preferred Music Search Source**\nChoose your preferred platform for music searches from the selection menu below.');
 
       const selectMenuOptions = allowedSources.map(src => ({
@@ -128,7 +126,7 @@ export default {
         .addOptions(selectMenuOptions);
 
       const row = new ActionRowBuilder().addComponents(selectMenu);
-      const response = await message.reply({ 
+      const response = await message.reply({
         components: [menuCard.components[0], row],
         flags: menuCard.flags
       });
@@ -172,7 +170,7 @@ export default {
           const disabledMenu = StringSelectMenuBuilder.from(selectMenu).setDisabled(true);
           const disabledRow = new ActionRowBuilder().addComponents(disabledMenu);
           const expiredCard = PrefixLayout.messageCard('⚙️', '**Music search source selection menu expired.**');
-          await response.edit({ 
+          await response.edit({
             components: [expiredCard.components[0], disabledRow],
             flags: expiredCard.flags
           }).catch(() => {});

@@ -6,11 +6,6 @@ export default {
   name: 'join',
   description: 'Bot joins your voice channel.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >join).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const client = message.client;
@@ -29,7 +24,6 @@ export default {
         return message.reply(card).catch(console.error);
       }
 
-      // Sort healthy nodes
       connectedNodes.sort((a, b) => {
         const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
         const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
@@ -50,7 +44,6 @@ export default {
           return message.reply(card).catch(console.error);
         }
 
-        // Move to new voice channel
         const shoukakuPlayer = await client.shoukaku.joinVoiceChannel({
           guildId: guildId,
           channelId: voiceChannel.id,
@@ -67,7 +60,6 @@ export default {
         return;
       }
 
-      // Join voice channel
       const shoukakuPlayer = await client.shoukaku.joinVoiceChannel({
         guildId: guildId,
         channelId: voiceChannel.id,
@@ -76,7 +68,6 @@ export default {
         nodeName: bestNode.name
       });
 
-      // Initialize player state
       if (!client.activePlayers) {
         client.activePlayers = new Map();
       }
@@ -109,10 +100,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /join).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const client = interaction.client;
@@ -131,7 +118,6 @@ export default {
         return interaction.reply({ ...card, ephemeral: false }).catch(console.error);
       }
 
-      // Sort healthy nodes
       connectedNodes.sort((a, b) => {
         const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
         const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
@@ -152,7 +138,6 @@ export default {
           return interaction.reply({ ...card, ephemeral: false }).catch(console.error);
         }
 
-        // Move to new voice channel
         const shoukakuPlayer = await client.shoukaku.joinVoiceChannel({
           guildId: guildId,
           channelId: voiceChannel.id,
@@ -169,7 +154,6 @@ export default {
         return;
       }
 
-      // Join voice channel
       const shoukakuPlayer = await client.shoukaku.joinVoiceChannel({
         guildId: guildId,
         channelId: voiceChannel.id,
@@ -178,7 +162,6 @@ export default {
         nodeName: bestNode.name
       });
 
-      // Initialize player state
       if (!client.activePlayers) {
         client.activePlayers = new Map();
       }

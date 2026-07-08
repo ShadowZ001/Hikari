@@ -1,10 +1,10 @@
-import { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ComponentType
 } from 'discord.js';
@@ -20,7 +20,7 @@ export default {
     {
       name: 'amount',
       description: 'Volume amount (0-100)',
-      type: 4, // INTEGER
+      type: 4,
       required: false
     }
   ],

@@ -6,11 +6,6 @@ export default {
   name: 'ignore',
   description: 'Manage the ignored channels list for the bot.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >ignore).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const guildId = message.guildId;
@@ -18,7 +13,6 @@ export default {
 
       const subcommand = args[0]?.toLowerCase();
 
-      // Initialize ignoredChannels Map on the client if it doesn't exist
       if (!message.client.ignoredChannels) {
         message.client.ignoredChannels = new Map();
       }
@@ -34,7 +28,6 @@ export default {
           }
         }
 
-        // Verify channel is valid and exists in this server
         if (!channelId || !message.guild.channels.cache.has(channelId)) {
           const warnEmoji = EMOJIS.warnnn || '<:warnnn:1498633209246646393>';
           return message.reply(IgnoreLayout.messageCard(warnEmoji, 'Please provide a valid channel.'));
@@ -65,8 +58,8 @@ export default {
           const checkEmoji = EMOJIS.checkk || '<:checkk:1498633200346464276>';
           return message.reply(IgnoreLayout.messageCard(checkEmoji, `Successfully removed <#${channelId}> from the ignore channel list.`));
         }
-      } 
-      
+      }
+
       else if (subcommand === 'list') {
         let config = await GuildConfig.findOne({ guildId });
         const ignoredChannels = config ? config.ignoredChannels : [];
@@ -77,8 +70,8 @@ export default {
         } else {
           return message.reply(IgnoreLayout.listCard(ignoredChannels));
         }
-      } 
-      
+      }
+
       else if (subcommand === 'reset') {
         let config = await GuildConfig.findOne({ guildId });
         const ignoredChannels = config ? config.ignoredChannels : [];
@@ -98,7 +91,6 @@ export default {
         }
       }
 
-      // If no valid subcommand is provided, show the help layout
       const username = message.member?.displayName || message.author.username;
       await message.reply(IgnoreLayout.help(username));
     } catch (error) {
@@ -106,10 +98,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /ignore).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const guildId = interaction.guildId;
@@ -138,8 +126,8 @@ export default {
 
         const checkEmoji = EMOJIS.checkk || '<:checkk:1498633200346464276>';
         await interaction.reply(IgnoreLayout.messageCard(checkEmoji, `Successfully added <#${channelId}> to the ignore channel list.`));
-      } 
-      
+      }
+
       else if (subcommand === 'remove') {
         const channel = interaction.options.getChannel('channel', true);
         const channelId = channel.id;
@@ -153,8 +141,8 @@ export default {
 
         const checkEmoji = EMOJIS.checkk || '<:checkk:1498633200346464276>';
         await interaction.reply(IgnoreLayout.messageCard(checkEmoji, `Successfully removed <#${channelId}> from the ignore channel list.`));
-      } 
-      
+      }
+
       else if (subcommand === 'list') {
         const ignoredChannels = config ? config.ignoredChannels : [];
 
@@ -164,8 +152,8 @@ export default {
         } else {
           await interaction.reply(IgnoreLayout.listCard(ignoredChannels));
         }
-      } 
-      
+      }
+
       else if (subcommand === 'reset') {
         const ignoredChannels = config ? config.ignoredChannels : [];
 

@@ -10,10 +10,6 @@ export default {
   category: 'Playlist',
   usage: '<playlist name> | <song name or link>',
 
-  /**
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const content = args.join(' ').trim();
@@ -39,14 +35,14 @@ export default {
         playlistName = parts[0].trim();
         songQuery = parts[1]?.trim();
       } else {
-        // Find if any playlist name matches the start of the content
+
         const playlists = await Playlist.find({ userId: message.author.id });
         const match = playlists.find(pl => content.toLowerCase().startsWith(pl.name.toLowerCase()));
         if (match) {
           playlistName = match.name;
           songQuery = content.slice(match.name.length).trim();
         } else {
-          // Fallback: first word is playlist, rest is song
+
           const words = content.split(/ +/);
           playlistName = words[0];
           songQuery = words.slice(1).join(' ');
@@ -58,15 +54,14 @@ export default {
         return message.reply(PlaylistLayout.messageCard(warnEmoji, `I could not find a playlist named ${playlistName}.`));
       }
 
-      // If a song name is passed, use it. Otherwise, look for currently playing track.
       let resolvedSong = null;
       if (songQuery) {
         const resolved = await resolveTrack(songQuery);
         if (resolved) {
           resolvedSong = resolved;
         } else {
-          resolvedSong = { 
-            title: songQuery, 
+          resolvedSong = {
+            title: songQuery,
             uri: 'https://youtube.com/watch?v=mock',
             artist: 'Unknown Artist',
             duration: '3:44',
@@ -93,7 +88,7 @@ export default {
       }
 
       playlist.tracks.push(resolvedSong);
-      // Explicitly mark modified for schema arrays
+
       playlist.markModified('tracks');
       await playlist.save();
 
@@ -107,13 +102,10 @@ export default {
     }
   },
 
-  /**
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const playlistName = interaction.options.getString('playlist', true).trim();
-      const songQuery = interaction.options.getString('song')?.trim(); // Optional
+      const songQuery = interaction.options.getString('song')?.trim();
       const warnEmoji = EMOJIS.warnnn || '<:warnnn:1498633209246646393>';
 
       const playlist = await Playlist.findOne({ userId: interaction.user.id, name: playlistName });
@@ -127,8 +119,8 @@ export default {
         if (resolved) {
           resolvedSong = resolved;
         } else {
-          resolvedSong = { 
-            title: songQuery, 
+          resolvedSong = {
+            title: songQuery,
             uri: 'https://youtube.com/watch?v=mock',
             artist: 'Unknown Artist',
             duration: '3:44',

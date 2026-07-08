@@ -27,7 +27,7 @@ export default {
           newMode = modeInput;
         }
       } else {
-        // Toggle cycle: off -> track -> queue -> off
+
         if (player.loopMode === 'off') newMode = 'track';
         else if (player.loopMode === 'track') newMode = 'queue';
         else newMode = 'off';
@@ -72,7 +72,7 @@ export default {
           return message.reply(card);
         }
       } else {
-        // Toggle cycle
+
         if (player.loopMode === 'off') newMode = 'track';
         else if (player.loopMode === 'track') newMode = 'queue';
         else newMode = 'off';

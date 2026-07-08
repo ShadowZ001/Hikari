@@ -13,7 +13,7 @@ export default {
     {
       name: 'target',
       description: 'The command to reload, or "all" to reload all commands.',
-      type: 3, // STRING
+      type: 3,
       required: true
     }
   ],

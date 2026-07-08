@@ -26,7 +26,7 @@ export default {
       dmContent += `👤 **Artist:** \`${artist}\` • ⏱️ **Duration:** \`${duration}\`\n`;
 
       const card = PrefixLayout.messageCard(EMOJIS.checkk || '✅', dmContent);
-      
+
       try {
         await interaction.user.send(card);
         const successNotice = PrefixLayout.messageCard(EMOJIS.checkk || '✅', '**I have sent the song details to your DMs.**');

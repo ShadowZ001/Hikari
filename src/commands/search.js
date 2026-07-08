@@ -1,9 +1,9 @@
-import { 
-  ActionRowBuilder, 
-  StringSelectMenuBuilder, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ButtonStyle,
   ComponentType
@@ -22,7 +22,7 @@ export default {
     {
       name: 'query',
       description: 'The search query.',
-      type: 3, // STRING
+      type: 3,
       required: true
     }
   ],
@@ -81,7 +81,6 @@ export default {
         return message.reply(card);
       }
 
-      // Slice to top 10 results
       const results = tracks.slice(0, 10);
 
       const header = new TextDisplayBuilder().setContent(`### 🔍 Search Results for "${query}"`);
@@ -120,7 +119,7 @@ export default {
         flags: MessageFlags.IsComponentsV2
       };
 
-      const msg = message.deferred 
+      const msg = message.deferred
         ? await message.editReply(payload)
         : await message.reply(payload);
 
@@ -152,7 +151,7 @@ export default {
           connectedNodes.sort((a, b) => {
             const statsA = a.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
             const statsB = b.stats || { cpu: { systemLoad: 0.5 }, players: 0 };
-            return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) - 
+            return ((statsA.cpu.systemLoad * 100) + statsA.players + (a.ping / 10)) -
                    ((statsB.cpu.systemLoad * 100) + statsB.players + (b.ping / 10));
           });
           const bestNode = connectedNodes[0];

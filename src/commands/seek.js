@@ -9,7 +9,7 @@ export default {
     {
       name: 'time',
       description: 'Time to seek to (e.g. 40, 1:30, 10s, 1m)',
-      type: 3, // STRING
+      type: 3,
       required: true
     }
   ],
@@ -101,7 +101,7 @@ function parseDuration(input) {
   if (/^\d+$/.test(cleanInput)) {
     return parseInt(cleanInput) * 1000;
   }
-  
+
   if (/^\d+:\d+$/.test(cleanInput)) {
     const [minutes, seconds] = cleanInput.split(':').map(Number);
     return (minutes * 60 + seconds) * 1000;

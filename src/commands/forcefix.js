@@ -6,18 +6,12 @@ export default {
   name: 'forcefix',
   description: 'Force fixes stuck or erroring music players in the server.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >forcefix).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const client = message.client;
       const guildId = message.guildId;
       const username = message.author.tag;
 
-      // Determine action (default 'full')
       let action = args[0]?.toLowerCase() || 'full';
       if (!['full', 'player', 'voice', 'lavalink'].includes(action)) {
         action = 'full';
@@ -33,17 +27,12 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /forcefix).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const client = interaction.client;
       const guildId = interaction.guildId;
       const username = interaction.user.tag;
 
-      // Get action parameter
       let action = interaction.options.getString('action') || 'full';
       if (!['full', 'player', 'voice', 'lavalink'].includes(action)) {
         action = 'full';
@@ -60,23 +49,15 @@ export default {
   }
 };
 
-/**
- * Performs the force fix routing on the guild player / voice connection.
- * @param {import('discord.js').Client} client 
- * @param {string} guildId 
- * @param {string} action 
- */
 async function performForceFix(client, guildId, action) {
   const player = client.activePlayers?.get(guildId);
 
-  // If action includes player or full
   if (action === 'full' || action === 'player') {
     if (player) {
-      // 1. Save state
+
       const voiceChannelId = player.voiceChannelId;
       const textChannel = player.message?.channel;
 
-      // 2. Destroy player and leave voice channel
       try {
         if (player.shoukakuPlayer) {
           player.shoukakuPlayer.removeAllListeners();
@@ -86,26 +67,22 @@ async function performForceFix(client, guildId, action) {
         console.error(`[ForceFix] Error leaving voice channel for guild ${guildId}:`, err);
       }
 
-      // 3. Clear timeout
       if (player.timeoutId) {
         clearTimeout(player.timeoutId);
         player.timeoutId = null;
       }
 
-      // Reset Shoukaku player reference
       player.shoukakuPlayer = null;
 
-      // 4. Wait for connection cleanup (1500 ms) to prevent race conditions
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      // 5. Restart playback
       if (textChannel) {
         await playTrack(client, guildId, textChannel).catch(err => {
           console.error(`[ForceFix] Error playing track during force fix:`, err);
         });
       }
     } else {
-      // Clean up stray connection if any
+
       try {
         await client.shoukaku.leaveVoiceChannel(guildId).catch(() => null);
       } catch (err) {
@@ -114,7 +91,6 @@ async function performForceFix(client, guildId, action) {
     }
   }
 
-  // If action is voice, clean up voice connection specifically
   if (action === 'voice') {
     try {
       if (player && player.shoukakuPlayer) {
@@ -128,7 +104,6 @@ async function performForceFix(client, guildId, action) {
           player.timeoutId = null;
         }
 
-        // Wait for connection cleanup (1500 ms) to prevent race conditions
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         const textChannel = player.message?.channel;
@@ -143,10 +118,9 @@ async function performForceFix(client, guildId, action) {
     }
   }
 
-  // If action is lavalink, check nodes and reconnect any offline ones
   if (action === 'lavalink') {
     client.shoukaku.nodes.forEach(async (node) => {
-      if (node.state !== 1) { // Not CONNECTED
+      if (node.state !== 1) {
         console.log(`[ForceFix] Reconnecting Lavalink Node: "${node.name}"`);
         try {
           await node.connect();

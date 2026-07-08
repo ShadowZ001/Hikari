@@ -1,10 +1,10 @@
-import { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ComponentType,
   ApplicationCommandOptionType
@@ -21,18 +21,18 @@ export default {
     {
       name: 'add',
       description: 'Add a user to global no-prefix access.',
-      type: 1, // SUB_COMMAND
+      type: 1,
       options: [
         {
           name: 'user',
           description: 'The user to add.',
-          type: 6, // USER
+          type: 6,
           required: true
         },
         {
           name: 'duration',
           description: 'Duration (e.g. 24h, 10d, 2w, 1m, 1y or "permanent")',
-          type: 3, // STRING
+          type: 3,
           required: false
         }
       ]
@@ -40,12 +40,12 @@ export default {
     {
       name: 'remove',
       description: 'Remove a user from global no-prefix access.',
-      type: 1, // SUB_COMMAND
+      type: 1,
       options: [
         {
           name: 'user',
           description: 'The user to remove.',
-          type: 6, // USER
+          type: 6,
           required: true
         }
       ]
@@ -53,18 +53,18 @@ export default {
     {
       name: 'clear',
       description: 'Clear all users from global no-prefix access.',
-      type: 1, // SUB_COMMAND
+      type: 1,
       options: []
     },
     {
       name: 'status',
       description: "Check a user's global no-prefix access status.",
-      type: 1, // SUB_COMMAND
+      type: 1,
       options: [
         {
           name: 'user',
           description: 'The user to check.',
-          type: 6, // USER
+          type: 6,
           required: true
         }
       ]
@@ -72,7 +72,7 @@ export default {
     {
       name: 'list',
       description: 'List all users with global no-prefix access.',
-      type: 1, // SUB_COMMAND
+      type: 1,
       options: []
     }
   ],
@@ -139,7 +139,6 @@ export default {
       const warnEmoji = EMOJIS.warnnn || '⚠️';
       const checkEmoji = EMOJIS.checkk || '✅';
 
-      // 1. ADD SUBCOMMAND
       if (subcommand === 'add' || subcommand === 'a' || subcommand === '+') {
         const targetArg = args[1];
         if (!targetArg) {
@@ -201,7 +200,6 @@ export default {
         return message.reply(card);
       }
 
-      // 2. REMOVE SUBCOMMAND
       if (subcommand === 'remove' || subcommand === 'r' || subcommand === '-') {
         const targetArg = args[1];
         if (!targetArg) {
@@ -231,7 +229,6 @@ export default {
         return message.reply(card);
       }
 
-      // 3. CLEAR SUBCOMMAND
       if (subcommand === 'clear') {
         const res = await NoPrefix.deleteMany({});
         const card = PrefixLayout.messageCard(checkEmoji, `**Successfully cleared no-prefix access from all \`${res.deletedCount}\` users.**`);
@@ -239,7 +236,6 @@ export default {
         return message.reply(card);
       }
 
-      // 4. STATUS SUBCOMMAND
       if (subcommand === 'status' || subcommand === 's' || subcommand === 'check') {
         const targetArg = args[1];
         if (!targetArg) {
@@ -270,7 +266,6 @@ export default {
         return message.reply(card);
       }
 
-      // 5. LIST SUBCOMMAND
       if (subcommand === 'list' || subcommand === 'l') {
         const list = await NoPrefix.find({});
         const activeList = list.filter(entry => !entry.expiresAt || entry.expiresAt.getTime() > Date.now());

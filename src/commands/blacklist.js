@@ -6,18 +6,12 @@ export default {
   name: 'blacklist',
   description: 'Manage the bot blacklist.',
 
-  /**
-   * Execution handler for prefix commands (e.g. >blacklist).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const warnEmoji = EMOJIS.warnnn || '⚠️';
       const checkEmoji = EMOJIS.checkk || '✅';
       const infoEmoji = EMOJIS.infoo || 'ℹ️';
 
-      // Check owner permission (read OWNER_IDS from process.env)
       const ownerIds = (process.env.OWNER_IDS || '').split(',').map(id => id.trim());
       if (!ownerIds.includes(message.author.id)) {
         const card = PrefixLayout.messageCard(warnEmoji, '**This command only for bot owners.**');
@@ -62,8 +56,8 @@ export default {
 
           const card = PrefixLayout.messageCard(checkEmoji, `**<@${userId}> has been blacklisted.**`);
           return message.reply(card).catch(console.error);
-        } 
-        
+        }
+
         else if (subcommand === 'remove') {
           if (!client.blacklist.has(userId)) {
             const card = PrefixLayout.messageCard(infoEmoji, `**<@${userId}> is not blacklisted.**`);
@@ -75,8 +69,8 @@ export default {
 
           const card = PrefixLayout.messageCard(checkEmoji, `**<@${userId}> has been removed from the blacklist.**`);
           return message.reply(card).catch(console.error);
-        } 
-        
+        }
+
         else if (subcommand === 'check') {
           const isBlacklisted = client.blacklist.has(userId);
           if (isBlacklisted) {
@@ -87,8 +81,8 @@ export default {
             return message.reply(card).catch(console.error);
           }
         }
-      } 
-      
+      }
+
       else if (subcommand === 'list') {
         const list = Array.from(client.blacklist);
         if (list.length === 0) {
@@ -99,10 +93,10 @@ export default {
           const card = PrefixLayout.messageCard(infoEmoji, `**Blacklisted Users:**\n${mentions}`);
           return message.reply(card).catch(console.error);
         }
-      } 
-      
+      }
+
       else {
-        // Show usage instructions
+
         const card = PrefixLayout.messageCard(infoEmoji, `**Usage:** \`${process.env.PREFIX || '>'}blacklist <add/remove/check/list> [user/ID]\``);
         return message.reply(card).catch(console.error);
       }
@@ -111,17 +105,12 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /blacklist).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const warnEmoji = EMOJIS.warnnn || '⚠️';
       const checkEmoji = EMOJIS.checkk || '✅';
       const infoEmoji = EMOJIS.infoo || 'ℹ️';
 
-      // Check owner permission (read OWNER_IDS from process.env)
       const ownerIds = (process.env.OWNER_IDS || '').split(',').map(id => id.trim());
       if (!ownerIds.includes(interaction.user.id)) {
         const card = PrefixLayout.messageCard(warnEmoji, '**This command only for bot owners.**');
@@ -159,8 +148,8 @@ export default {
 
           const card = PrefixLayout.messageCard(checkEmoji, `**<@${userId}> has been blacklisted.**`);
           return interaction.reply({ ...card, ephemeral: false }).catch(console.error);
-        } 
-        
+        }
+
         else if (action === 'remove') {
           if (!client.blacklist.has(userId)) {
             const card = PrefixLayout.messageCard(infoEmoji, `**<@${userId}> is not blacklisted.**`);
@@ -172,8 +161,8 @@ export default {
 
           const card = PrefixLayout.messageCard(checkEmoji, `**<@${userId}> has been removed from the blacklist.**`);
           return interaction.reply({ ...card, ephemeral: false }).catch(console.error);
-        } 
-        
+        }
+
         else if (action === 'check') {
           const isBlacklisted = client.blacklist.has(userId);
           if (isBlacklisted) {
@@ -184,8 +173,8 @@ export default {
             return interaction.reply({ ...card, ephemeral: false }).catch(console.error);
           }
         }
-      } 
-      
+      }
+
       else if (action === 'list') {
         const list = Array.from(client.blacklist);
         if (list.length === 0) {

@@ -1,10 +1,10 @@
-import { 
-  ActionRowBuilder, 
-  ButtonBuilder, 
-  ButtonStyle, 
-  ContainerBuilder, 
-  TextDisplayBuilder, 
-  SeparatorBuilder, 
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ContainerBuilder,
+  TextDisplayBuilder,
+  SeparatorBuilder,
   MessageFlags,
   ComponentType
 } from 'discord.js';
@@ -19,7 +19,7 @@ export default {
     {
       name: 'user',
       description: 'The user to check mutual servers with.',
-      type: 6, // USER
+      type: 6,
       required: true
     }
   ],

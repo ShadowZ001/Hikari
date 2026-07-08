@@ -1,9 +1,5 @@
 import { MemberCountLayout } from '../components/MemberCountLayout.js';
 
-/**
- * Returns formatted time string matching H:MM AM/PM.
- * @returns {string}
- */
 function getFormattedTime() {
   return new Date().toLocaleTimeString('en-US', {
     hour: 'numeric',
@@ -17,17 +13,11 @@ export default {
   description: "Displays the server's member counts in a beautiful V2 layout.",
   aliases: ['mc'],
 
-  /**
-   * Execution handler for prefix commands (e.g. >membercount or >mc).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       const guild = message.guild;
       if (!guild) return;
 
-      // Fetch all members to get accurate bot/human/online counts
       const members = await guild.members.fetch({ withPresences: true }).catch(() => guild.members.cache);
       const total = guild.memberCount || members.size;
       const bots = members.filter(m => m.user.bot).size;
@@ -51,10 +41,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /membercount).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const guild = interaction.guild;

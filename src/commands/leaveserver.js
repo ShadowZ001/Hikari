@@ -9,7 +9,7 @@ export default {
     {
       name: 'guild_id',
       description: 'The ID of the guild to leave.',
-      type: 3, // STRING
+      type: 3,
       required: true
     }
   ],

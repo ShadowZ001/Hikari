@@ -5,11 +5,6 @@ const LAVALINK_HOST = process.env.LAVALINK_HOST || 'sg1-nodelink.nyxbot.app';
 const LAVALINK_PORT = parseInt(process.env.LAVALINK_PORT || '3000', 10);
 const LAVALINK_PASSWORD = process.env.LAVALINK_PASSWORD || 'nyxbot.app/support';
 
-/**
- * Formats milliseconds into mm:ss format.
- * @param {number} ms 
- * @returns {string}
- */
 export function formatDuration(ms) {
   if (!ms || isNaN(ms)) return '3:44';
   const totalSeconds = Math.floor(ms / 1000);
@@ -18,16 +13,10 @@ export function formatDuration(ms) {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 }
 
-/**
- * Queries the Lavalink rest endpoint to resolve track metadata.
- * Supports searching via YouTube (ytsearch:) or direct links.
- * @param {string} query 
- * @returns {Promise<object | null>}
- */
 export async function resolveTrack(query) {
   const isUrl = query.startsWith('http://') || query.startsWith('https://');
   const identifier = isUrl ? query : `ytmsearch:${query}`;
-  
+
   return new Promise((resolve) => {
     const encodedIdentifier = encodeURIComponent(identifier);
     const options = {
@@ -95,16 +84,10 @@ export async function resolveTrack(query) {
   });
 }
 
-/**
- * Queries the Lavalink rest endpoint to resolve multiple tracks (or playlists).
- * @param {string} query 
- * @param {string} [engine] 
- * @returns {Promise<object[]>}
- */
 export async function resolveTracks(query, engine) {
   const isUrl = query.startsWith('http://') || query.startsWith('https://');
   const identifier = isUrl ? query : `${engine || 'ytmsearch'}:${query}`;
-  
+
   return new Promise((resolve) => {
     const encodedIdentifier = encodeURIComponent(identifier);
     const options = {
@@ -173,12 +156,6 @@ export async function resolveTracks(query, engine) {
   });
 }
 
-/**
- * Queries connected Lavalink nodes to fetch their supported source managers.
- * Handles HTTPS/HTTP protocols dynamically depending on node setup.
- * @param {import('discord.js').Client} client 
- * @returns {Promise<string[]>} Supported source managers list (e.g. ['youtube', 'spotify'])
- */
 export async function getLavalinkSupportedSources(client) {
   if (!client || !client.shoukaku) return [];
 

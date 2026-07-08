@@ -2,10 +2,6 @@ import { BannerLayout } from '../components/BannerLayout.js';
 import { EMOJIS } from '../emojis.js';
 import { ContainerBuilder, TextDisplayBuilder, MessageFlags } from 'discord.js';
 
-/**
- * Returns formatted time string matching H:MM AM/PM.
- * @returns {string}
- */
 function getFormattedTime() {
   return new Date().toLocaleTimeString('en-US', {
     hour: 'numeric',
@@ -14,11 +10,6 @@ function getFormattedTime() {
   });
 }
 
-/**
- * Renders a simple warning/error card.
- * @param {string} text 
- * @returns {object}
- */
 function warningCard(text) {
   const container = new ContainerBuilder();
   const warnEmoji = EMOJIS.warnnn || '<:warnnn:1498633209246646393>';
@@ -36,15 +27,10 @@ export default {
   name: 'banner',
   description: "Displays a user's banner in a beautiful V2 layout.",
 
-  /**
-   * Execution handler for prefix commands (e.g. >banner).
-   * @param {import('discord.js').Message} message 
-   * @param {string[]} args 
-   */
   async execute(message, args) {
     try {
       let targetUser = message.mentions.users.first();
-      
+
       if (!targetUser && args[0]) {
         const userId = args[0].replace(/[<@!>]/g, '');
         if (/^\d+$/.test(userId)) {
@@ -56,7 +42,6 @@ export default {
         targetUser = message.author;
       }
 
-      // Banner requires fetching the user first
       await targetUser.fetch().catch(() => {});
       const bannerUrl = targetUser.bannerURL({ size: 1024, forceStatic: false });
 
@@ -80,10 +65,6 @@ export default {
     }
   },
 
-  /**
-   * Execution handler for slash commands (e.g. /banner).
-   * @param {import('discord.js').ChatInputCommandInteraction} interaction 
-   */
   async executeSlash(interaction) {
     try {
       const targetUser = interaction.options.getUser('user') || interaction.user;
